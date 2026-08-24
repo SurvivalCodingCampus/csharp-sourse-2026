@@ -59,13 +59,14 @@ public class Cleric
         
         if (this.MP + restoreMp > MaxMp)
         {
+            restoreMp = MaxMp - this.MP;
             this.MP = MaxMp;
+            return  restoreMp;
         }
         else
         {
-            this.MP += restoreMp;
+            this.MP += restoreMp; 
+            return restoreMp;
         }
-
-        return restoreMp;
     }
 }

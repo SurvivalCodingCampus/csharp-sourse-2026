@@ -21,8 +21,8 @@ public Cleric(string name, int hp, int mp)
         throw new ArgumentNullException(nameof(name));
     }
     this.Name = name;
-    this.HP = hp >= MaxHp ? MaxHp : hp;
-    this.MP = mp >= MaxMp ? MaxMp : mp;
+    this.HP = hp >= MaxHp ? MaxHp : hp > 0 ? hp : 0;
+    this.MP = mp >= MaxMp ? MaxMp : mp > 0 ? mp : 0;
 }
     
 ```
@@ -34,8 +34,8 @@ public Cleric(string name, int hp, int mp)
 public Cleric(string name, int hp, int mp)
 {
     this.Name = name ?? throw new ArgumentNullException(nameof(name));
-    this.HP = hp >= MaxHp ? MaxHp : hp;
-    this.MP = mp >= MaxMp ? MaxMp : mp;
+    this.HP = hp >= MaxHp ? MaxHp : hp > 0 ? hp : 0;
+    this.MP = mp >= MaxMp ? MaxMp : mp > 0 ? mp : 0;
 }
 
 ```
