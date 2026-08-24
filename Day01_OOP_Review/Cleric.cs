@@ -55,7 +55,7 @@ public class Cleric
     public int Pray(int seconds)
     {
         Random rnd = new Random();
-        int restoreMp = rnd.Next(0, 2) + seconds;
+        int restoreMp = rnd.Next(2) + seconds;
         
         if (this.MP + restoreMp > MaxMp)
         {
