@@ -60,20 +60,20 @@ public class MainClass
         Console.WriteLine("케임브리지에서 근무하는 모든 거래자를 찾아서 이름순으로 정렬하여 나열");
         transactions.Where(e => e.Trader.City == "Cambridge")
             .OrderBy(e => e.Trader.Name)
+            .DistinctBy(e => e.Trader.Name)
             .ToList()
             .ForEach(e => Console.WriteLine(e.Trader.Name));
 
         // 4. 모든 거래자의 이름을 알파벳순으로 정렬하여 나열하시오
         Console.WriteLine("모든 거래자의 이름을 알파벳순으로 정렬하여 나열");
         transactions.OrderBy(e => e.Trader.Name)
+            .DistinctBy(e => e.Trader.Name)
             .ToList()
             .ForEach(e => Console.WriteLine(e.Trader.Name));
         
         // 5. 밀라노에 거래자가 있는가?
         Console.WriteLine("밀라노에 거래자가 있는가?");
-        transactions.Where(e => e.Trader.City == "Milan")
-            .ToList()
-            .ForEach(e => Console.WriteLine(e.Trader.Name));
+        Console.WriteLine(transactions.Any(e => e.Trader.City == "Milan"));
 
         // 6. 케임브리지에 거주하는 거래자의 모든 트랙잭션값을 출력하시오
         Console.WriteLine("케임브리지에 거주하는 거래자의 모든 트랙잭션값을 출력");
