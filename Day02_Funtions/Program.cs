@@ -41,15 +41,62 @@ public class MainClass
     public static void Main(string[] args)
     {
         // 1. 2011년에 일어난 모든 트랜잭션을 찾아 가격 기준 오름차순으로 정리하여 이름을 나열하시오
-        //
         
-        Console.WriteLine("1. =======================");
+        Console.WriteLine("1. =======================\n");
         transactions.Where(e => e.Year == 2011)
             .OrderBy(e => e.Value)
             .ToList()
             .ForEach(e => Console.WriteLine(e.Trader.Name));
         
-        Console.WriteLine("2. =======================");
+        Console.WriteLine("2. =======================\n");
+        transactions.Select(e => e.Trader.City)
+            .Distinct()
+            .ToList()
+            .ForEach(city => Console.WriteLine(city));
+        
+        Console.WriteLine("3. =======================\n");
+        transactions.Where(e => e.Trader.City == "Cambridge")
+            .Select(e => e.Trader.Name)
+            .Distinct()
+            .OrderBy(name => name)
+            .ToList()
+            .ForEach(Console.WriteLine);
+        
+        Console.WriteLine("4. =======================\n");
+        transactions.Select(e => e.Trader.Name)
+            .Distinct()
+            .OrderBy(name => name)
+            .ToList()
+            .ForEach(Console.WriteLine);
+        
+        Console.WriteLine("5. =======================\n");
+        if (transactions.Any(e => e.Trader.City == "Milan"))
+        {
+            Console.WriteLine("존재한다");
+        }
+        else
+        {
+            Console.WriteLine("존재하지 않는다");
+        }
+        
+        Console.WriteLine("6. =======================\n");
+        transactions.Where(e => e.Trader.City == "Cambridge")
+            .OrderBy(e => e.Value)
+            .ToList()
+            .ForEach(e => Console.WriteLine(e.Value));
+        
+        Console.WriteLine("7. =======================\n");
+        int maxValue = transactions.Select(e => e.Value)
+                        .Aggregate((e, value) => Math.Max(e, value));
+        
+        Console.WriteLine(maxValue);
+        
+        Console.WriteLine("8. =======================\n");
+        int minValue = transactions.Select(e => e.Value)
+                        .Aggregate((e, value) => Math.Min(e, value));
+        
+        Console.WriteLine(minValue);
+        
     }
 }
 
