@@ -4,6 +4,8 @@ class Program
 {
     static void Main(string[] args)
     {
-        Console.WriteLine("Hello, World!");
+        User user = new User();
+        Console.WriteLine(user.Name);
+        user.Name = "Ja";
     }
 }
