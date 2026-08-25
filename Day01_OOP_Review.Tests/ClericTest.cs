@@ -11,15 +11,14 @@ public class ClericTest
     [Test]
     public void SelfAid_하면_Mp가_5감소하고_Hp가_꽉_차야_됨()
     {
-        Cleric cleric = new Cleric("test", 50, 10);
-        Assert.AreEqual(50, cleric.Hp);
-        Assert.AreEqual(10, cleric.Mp);
+        Cleric cleric = new Cleric("test", 45, 10);
 
-        cleric.Hp -= 5;
-        
+        Assert.That(cleric.Hp, Is.EqualTo(45));
+        Assert.That(cleric.Mp, Is.EqualTo(10));
+
         cleric.SelfAid();
-        
-        Assert.AreEqual(5, cleric.Mp);
-        Assert.AreEqual(50, cleric.Hp);
+
+        Assert.That(cleric.Mp, Is.EqualTo(5));
+        Assert.That(cleric.Hp, Is.EqualTo(50));
     }
 }
