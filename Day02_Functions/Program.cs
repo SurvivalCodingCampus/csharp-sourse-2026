@@ -85,14 +85,14 @@ public class MainClass
         Console.WriteLine("===========2==========");
         
         // 2. 거래자가 근무하는 모든 도시를 중복 없이 나열하시오
-        transactions.Select(e => e.Trader.City).ToHashSet().ToList().ForEach(e => Console.WriteLine(e));
+        transactions.Select(e => e.Trader.City).Distinct().ToList().ForEach(e => Console.WriteLine(e));
         Console.WriteLine("===========3==========");
         
         // 3. 케임브리지에서 근무하는 모든 거래자를 찾아서 이름순으로 정렬하여 나열하시오
         transactions.Where(e => e.Trader.City == "Cambridge").
             OrderBy(e => e.Trader.Name).
             Select(e => e.Trader.Name).
-            ToHashSet().
+            Distinct().
             ToList().
             ForEach(e => Console.WriteLine(e));
         Console.WriteLine("===========4==========");
@@ -100,7 +100,7 @@ public class MainClass
         // 4. 모든 거래자의 이름을 알파벳순으로 정렬하여 나열하시오
         transactions.Select(e => e.Trader.Name).
             OrderBy(e => e).
-            ToHashSet().
+            Distinct().
             ToList().
             ForEach(e => Console.WriteLine(e));
         Console.WriteLine("===========5==========");
