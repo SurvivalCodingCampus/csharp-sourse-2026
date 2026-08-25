@@ -48,16 +48,18 @@ AI 대화 전문을 붙이지 말고 질문, 판단, 검증 내용을 요약합�
 return nowTime.Hour switch
 {
     >= 0 and < 2 => timeDataOne[0].Ty1,
-    >= 4 and < 6 => timeDataOne[0].Ty2,
-    >= 6 and < 8 => timeDataOne[0].Ty3,
-    >= 8 and < 10 => timeDataOne[0].Ty4,
-    >= 10 and < 12 => timeDataOne[0].Ty5,
-    >= 12 and < 14 => timeDataOne[0].Ty6,
-    >= 16 and < 18 => timeDataOne[0].Ty7,
-    >= 18 and < 20 => timeDataOne[0].Ty8,
-    >= 20 and < 22 => timeDataOne[0].Ty9,
-    >= 22 and < 24 => timeDataOne[0].Ty10,
-    _ => result
+    >= 2 and < 4 => timeDataOne[0].Ty2,
+    >= 4 and < 6 => timeDataOne[0].Ty3,
+    >= 6 and < 8 => timeDataOne[0].Ty4,
+    >= 8 and < 10 => timeDataOne[0].Ty5,
+    >= 10 and < 12 => timeDataOne[0].Ty6,
+    >= 12 and < 14 => timeDataOne[0].Ty7,
+    >= 14 and < 16 => timeDataOne[0].Ty8,
+    >= 16 and < 18 => timeDataOne[0].Ty9,
+    >= 18 and < 20 => timeDataOne[0].Ty10,
+    >= 20 and < 22 => timeDataOne[0].Ty11,
+    >= 22 and < 24 => timeDataOne[0].Ty12,
+    _ => throw new ArgumentException("Time Exception")
 };
 라고 작성하는 C# 8.0 부터 추가되었다는 Switch 함수식이라는 방법에 대하여 알게 되었는데,
 기존 문법보다 간편하게 사용할 수 있는것 같아 추가적인 사용 방법에 대하여 알고싶음.
