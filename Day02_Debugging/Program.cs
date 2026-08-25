@@ -1,4 +1,4 @@
-﻿namespace Day04_Debugging;
+﻿namespace Day02_Debugging;
 
 class Program
 {

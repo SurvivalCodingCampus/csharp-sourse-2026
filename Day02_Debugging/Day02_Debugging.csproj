@@ -5,7 +5,7 @@
         <TargetFramework>net10.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <RootNamespace>Day04_Debugging</RootNamespace>
+        <RootNamespace>Day02_Debugging</RootNamespace>
     </PropertyGroup>
 
 </Project>
