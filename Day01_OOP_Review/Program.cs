@@ -4,8 +4,7 @@ class Program
 {
     static void Main(string[] args)
     {
-        User user = new User();
-        Console.WriteLine(user.Name);
-        user.Name = "Ja";
+        Cleric cleric = new Cleric("test", 10, 3);
+        cleric.SelfAid();
     }
 }

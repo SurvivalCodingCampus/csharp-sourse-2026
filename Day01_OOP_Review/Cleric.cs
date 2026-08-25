@@ -44,7 +44,7 @@ public class Cleric
     {
         if (Mp < 5)
         {
-            return;
+            throw new Exception("Not enough MP");
         }
         Mp -= 5;
         Hp = MaxHp;
