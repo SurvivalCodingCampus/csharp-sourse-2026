@@ -38,6 +38,14 @@
         ㄴ> Distinct: 중복 요소 제거
         ㄴ> ToHashSet() //💣⭐select와 세트(Distinct | ToHashSet)이므로 같이 사용
         
- NOTION(memo): https://app.notion.com/p/3c70010901598070b270d1ebf57fe782
+
+ 
+[ C# 줄임 함수 표현 방식 ]
+ int Add(int a, int b) => a + b;
+ 즉, =>는 return을 의미
+ 
+ 
+ 
+  NOTION(memo): https://app.notion.com/p/3c70010901598070b270d1ebf57fe782 
 >```
 
