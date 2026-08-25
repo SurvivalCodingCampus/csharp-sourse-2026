@@ -1,4 +1,4 @@
-﻿namespace Dat02_Fuctions;
+﻿namespace Day2_Fuctions;
 
 public class Trader
 {
@@ -94,3 +94,4 @@ public class MainClass
     }
 
 }
+
