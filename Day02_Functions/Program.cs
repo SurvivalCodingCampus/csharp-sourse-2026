@@ -1,9 +1,6 @@
 ﻿namespace Day02_Functions;
 
 
-
-
-
 public class Trader
 {
     public string Name { get; set; }
@@ -103,19 +100,3 @@ public class MainClass
     }
 }
 
-
-
-
-
-
-
-
-
-
-// class Program
-// {
-//     static void Main(string[] args)
-//     {
-//         Console.WriteLine("Hello, World!");
-//     }
-// }
