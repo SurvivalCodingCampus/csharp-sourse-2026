@@ -2,49 +2,50 @@ using System;
 
 public class Cleric
 {
-    string Name;
-    int Hp;
-    int MaxHp = 50;
+    public string Name {get ; private set;}
+    public Random random = new Random();
     
-    int Mp;   
-    int MaxMp = 10;
-
-    private Random random = new Random();
-
-
-    public Cleric(String name)
+    const int MaxHp = 50;
+    const int MaxMp = 10;
+    public int Hp = MaxHp;
+    public int Mp = MaxMp;
+    
+    public Cleric(String name, int hp, int mp)
     {
-        if (name == null)
+        // 이름이 null이거나 띄어쓰기/빈 문자열인 경우 생성 자체를 막음
+        if (name is null)
         {
-            throw new ArgumentNullException("name");
+            throw new ArgumentNullException(
+                nameof(name)
+            );
         }
+
         Name = name;
+        Hp = hp;
+        Mp = mp;
     }
     
-    int SelfAid()
+    public int Pray(int seconds)
     {
-        if (Mp >= 5)
+        if (Mp < 1)
         {
-            Mp -= 5;
-            Hp = MaxHp;
+            return 0;
         }
-        return Hp;
-        
+
+        int randomBonusMp = random.Next(3); // 3: 0~2를 의미 :  Pray(int seconds) 는 seconds + 0~2 만큼 MP를 회복
+        Mp = Math.Min(Mp + randomBonusMp, MaxMp);
+
+        return randomBonusMp;
     }
 
-  
-
-    int Pray(int seconds)
+    public void SelfAid()
     {
-        int originalMp = Mp;
-        if(Mp < MaxMp)
+        if (Mp < 5)
         {
-            Mp += seconds;
-            int randomBonus = random.Next(0, 3);
-            Mp += randomBonus;
+            return;
+            
         }
-
-        int finalMp = Mp-originalMp; // 원래는 그냥  Mp만 작성하면 될 줄알았지만 실제  Mp반환을 위해 변수 추가 필요 
-        return finalMp;
+        Mp -= 5;
+        Hp -= MaxHp;
     }
 }
