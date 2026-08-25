@@ -111,7 +111,7 @@ public class MainClass
         Console.WriteLine("===========6==========");
         
         // 6. 케임브리지에 거주하는 거래자의 모든 트랙잭션값을 출력하시오
-        transactions.Where(e => e.Trader.City == "Milan").
+        transactions.Where(e => e.Trader.City == "Cambridge").
             ToList().
             ForEach(
                 e => Console.WriteLine(
@@ -128,6 +128,7 @@ public class MainClass
 
         // 8. 전체 트랜잭션 중 최소값은 얼마인가?
         Console.WriteLine(transactions.Select(e => e.Value).Aggregate((e, v) => Math.Min(e, v)));
+        Console.WriteLine("=====================");
 
     }
 }
