@@ -72,9 +72,9 @@ public class MainClass
         
         Console.WriteLine("6 =============");
         transactions.Where(e=>e.Trader.City=="Cambridge")
-            .Select(e=>e.Value)
             .ToList()
-            .ForEach(e => Console.WriteLine(e));
+            .ForEach(e => Console.WriteLine(
+                $"{e.Trader.Name} / {e.Trader.City} / {e.Year} / {e.Value}"));
         
         Console.WriteLine("7 =============");
         int MaxValue = transactions.Select(e => e.Value)
