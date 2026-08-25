@@ -12,7 +12,7 @@
 
 ## 어려웠던 점
 - C# 테스트 코드를 작성할 때 필요한 네임스페이스 참조(using System; 등)를 놓쳐 컴파일 에러가 발생했다.
-- Rider 단축키(Alt + Enter)로 생성된 메뉴 구조와 NUnit 전용 어트리뷰트([TestOf]) 적용 방식이 다소 생소했다.
+- Rider 단축키(Alt + Enter)로 생성된 메뉴 구조와 NUnit 테스트의 '[TestOf]' 방식이 다소 생소했다.
 
 ## 해결 방법
 - Rider의 자동 완성 기능과 Alt + Enter Quick Fix를 활용해 부족한 using 구문을 빠르게 추가했다.
