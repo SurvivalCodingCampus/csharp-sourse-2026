@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Day01_OOP_Review", "Day01_O
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Day01_OPP_Review_Test", "Day01_OPP_Review_Test\Day01_OPP_Review_Test.csproj", "{041D781E-9FD2-495C-8029-391435F389AF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Day02_Fuctions", "Day02_Fuctions\Day02_Fuctions.csproj", "{AC097825-8DB3-432D-ACCA-6E6082288D70}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{041D781E-9FD2-495C-8029-391435F389AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{041D781E-9FD2-495C-8029-391435F389AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{041D781E-9FD2-495C-8029-391435F389AF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AC097825-8DB3-432D-ACCA-6E6082288D70}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AC097825-8DB3-432D-ACCA-6E6082288D70}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AC097825-8DB3-432D-ACCA-6E6082288D70}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AC097825-8DB3-432D-ACCA-6E6082288D70}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

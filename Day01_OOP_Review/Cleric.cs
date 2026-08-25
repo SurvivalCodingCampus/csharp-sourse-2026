@@ -5,9 +5,9 @@ namespace Day01_OOP_Review;
 public class Cleric
 {
     public string name = "Cleric";
-    private static int maxHp = 50;
+    private const int maxHp = 50;
     public int Hp;
-    private static int maxMp = 10;
+    private const int maxMp = 10;
     public int Mp;
     
 
@@ -21,7 +21,12 @@ public class Cleric
 
     public int pray(int seconds)
     {
-        Hp += (seconds + Math.Max(0,2));
+        int revoveryMp = (seconds + Random.Shared.Next(3));
+        Mp += revoveryMp;
+        if (Mp < 1)
+        {
+            return 0;
+        }
         if (Mp >= maxMp)
         {
             Mp = maxMp;
