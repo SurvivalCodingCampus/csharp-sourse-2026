@@ -44,7 +44,8 @@ public class MainClass
         // 여기에 푸세요
         // 1. 2011년에 일어난 모든 트랜잭션을 찾아 가격 기준 오름차순으로 정리하여 이름을 나열하시오
         transactions.Where(e => e.Year == 2011)
-            .Select(e => e.Value)
+            .OrderBy(e => e.Value)
+            .Select(e => e.Trader.Name)
             .ToList()
             .ForEach(Console.WriteLine);
         // 2. 거래자가 근무하는 모든 도시를 중복 없이 나열하시오
@@ -74,8 +75,7 @@ public class MainClass
         Console.WriteLine(result);
         // 6. 케임브리지에 거주하는 거래자의 모든 트랙잭션값을 출력하시오
         transactions.Where(e => e.Trader.City == "Cambridge")
-            .Select(e => $" e")
-            .Select(e => $" e")
+            .Select(e =>  e.Value)
             .ToList()
             .ForEach(Console.WriteLine);
         // 7. 전체 트랜잭션 중 최대값은 얼마인가?

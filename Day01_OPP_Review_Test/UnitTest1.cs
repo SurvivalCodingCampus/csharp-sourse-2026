@@ -19,11 +19,11 @@ public class Tests
         var cleric = new Cleric("Degtayov", 25, 10);
         cleric.selfAid();
         
-        Assert.ReferenceEquals(5, cleric.Mp);
+        Assert.AreEqual(5, cleric.Mp);
         
         cleric.pray(3);
         
-        Assert.ReferenceEquals(10, cleric.Mp);
+        Assert.AreEqual(10, cleric.Mp);
 
         
         Assert.Pass();
