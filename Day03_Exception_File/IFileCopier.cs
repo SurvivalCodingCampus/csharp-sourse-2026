@@ -13,13 +13,15 @@ public class FileCopier : IFileCopier
         {
             string temp = File.ReadAllText(sourceFilePath);
             File.WriteAllText(destinationFilePath, temp);
-            File.Copy(sourceFilePath, "UsingFileCopy" + destinationFilePath, true);
+            // File.Copy(sourceFilePath, "UsingFileCopy" + destinationFilePath, true);
         }
         catch (Exception e)
         {
             Console.WriteLine(e);
-            throw new ArgumentException("복사 실패");
+            throw;
         }
+        
+        
         
     }
 }

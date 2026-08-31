@@ -13,6 +13,6 @@ public class Employee
 
     public virtual bool Equals(Employee? employee)
     {
-        return Name == employee.Name && Age == employee.Age;
+        return employee != null && Name == employee.Name && Age == employee.Age;
     }
 }
