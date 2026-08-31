@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Day03_File\Day03_File.csproj" />
+    <ProjectReference Include="..\Day03_Serialization\Day03_Serialization.csproj" />
   </ItemGroup>
   
 </Project>

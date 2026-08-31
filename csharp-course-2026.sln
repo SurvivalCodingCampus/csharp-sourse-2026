@@ -12,6 +12,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Day03_File", "Day03_File\Da
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Day03_File.Tests", "Day03_File.Tests\Day03_File.Tests.csproj", "{75D1011E-A045-4EC8-BD09-964E22131C7B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Day03_Serialization", "Day03_Serialization\Day03_Serialization.csproj", "{61DC19A3-B819-4BDB-AFC4-851872E0BF3E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -42,5 +44,9 @@ Global
 		{75D1011E-A045-4EC8-BD09-964E22131C7B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{75D1011E-A045-4EC8-BD09-964E22131C7B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{75D1011E-A045-4EC8-BD09-964E22131C7B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{61DC19A3-B819-4BDB-AFC4-851872E0BF3E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{61DC19A3-B819-4BDB-AFC4-851872E0BF3E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{61DC19A3-B819-4BDB-AFC4-851872E0BF3E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{61DC19A3-B819-4BDB-AFC4-851872E0BF3E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
