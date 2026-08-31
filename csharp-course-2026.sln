@@ -8,6 +8,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Day02_lambda", "Day02_lambd
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Day03_Exception", "Day03_Exception\Day03_Exception.csproj", "{D3556002-AECF-4DC9-831B-5F5B63DFA3A0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Day03_File", "Day03_File\Day03_File.csproj", "{2BC6BD5D-8FBD-4F29-9401-8229AA8EDD73}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Day03_File.Tests", "Day03_File.Tests\Day03_File.Tests.csproj", "{75D1011E-A045-4EC8-BD09-964E22131C7B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +34,13 @@ Global
 		{D3556002-AECF-4DC9-831B-5F5B63DFA3A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D3556002-AECF-4DC9-831B-5F5B63DFA3A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D3556002-AECF-4DC9-831B-5F5B63DFA3A0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2BC6BD5D-8FBD-4F29-9401-8229AA8EDD73}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2BC6BD5D-8FBD-4F29-9401-8229AA8EDD73}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2BC6BD5D-8FBD-4F29-9401-8229AA8EDD73}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2BC6BD5D-8FBD-4F29-9401-8229AA8EDD73}.Release|Any CPU.Build.0 = Release|Any CPU
+		{75D1011E-A045-4EC8-BD09-964E22131C7B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{75D1011E-A045-4EC8-BD09-964E22131C7B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{75D1011E-A045-4EC8-BD09-964E22131C7B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{75D1011E-A045-4EC8-BD09-964E22131C7B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
