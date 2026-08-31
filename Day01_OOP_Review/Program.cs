@@ -1,6 +1,6 @@
-﻿namespace Day01_OOP_Review;
+namespace Day01_OOP_Review;
 
-class Program
+public class Program
 {
     static void Main(string[] args)
     {

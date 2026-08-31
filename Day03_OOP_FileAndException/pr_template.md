@@ -1,0 +1,50 @@
+# 20260831_22_진미
+
+## 📝 과제 정보
+Exception | File Editting | CSV, Properties Class(Key & Value), XML, Json | (역)직렬화
+error
+-syntax error
+-runtime error
+-logic error
+-runtime error: (예외처리할때)
+
+
+exception
+-try~catch로 (Exception)
+-throw : 에러를 미룸
+-finally : 항상 해야하는 처리
+
+## ✨ 구현한 내용
+예외 작성법을 작성함
+
+
+## 📷 실행 결과 (또는 테스트 결과)
+
+
+## 🔄 자체 평가 & 회고
+- ai물어도 어떻게 적용해서 작성해야할 지...
+
+
+## 배운것
+Exception | File Editting | CSV, Properties Class(Key & Value), XML, Json | (역)직렬화
+error
+-syntax error
+-runtime error
+-logic error
+-runtime error: (예외처리할때)
+
+exception
+-try~catch로 (Exception)
+-throw : 에러를 미룸
+-finally : 항상 해야하는 처리
+
+------------
+Exception | File Editting | CSV, Properties Class(Key & Value), XML, Json | (역)직렬화
+File읽기
+ReadAllText
+
+file쓰기
+WriteAllText
+
+------------
+직렬화(Class > Json) | 역직렬화(Json > Class)
