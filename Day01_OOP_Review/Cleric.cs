@@ -1,4 +1,4 @@
-﻿namespace Day01_OOP_Review;
+namespace Day01_OOP_Review;
 
 using System;
 
@@ -12,11 +12,21 @@ public class Cleric
     public int Hp { get; private set; }
     public int Mp { get; private set; }
 
-    public Cleric(string name)
+    public Cleric(string name, int hp, int mp)
     {
         Name = name;
-        Hp = MaxHp;
-        Mp = MaxMp;
+        Hp = hp;
+        Mp = mp;
+    }
+
+    public Cleric(string name, int hp)
+        : this(name, hp, MaxMp)
+    {
+    }
+
+    public Cleric(string name)
+        : this(name, MaxHp, MaxMp)
+    {
     }
 
     public void SelfAid()
