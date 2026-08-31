@@ -1,6 +1,6 @@
 namespace Day01_OOP_Review;
 
-class Book
+internal class Book
 {
     public string title;
 
