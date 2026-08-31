@@ -13,7 +13,7 @@ public class Program_3
 
             var options = new JsonSerializerOptions
             {
-                WriteIndented = true, // JSON을 예쁘게 줄바꿈(Indent)해서 저장
+                WriteIndented = true, 
                 Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping // 한글 깨짐 방지
             };
             string jsonString = JsonSerializer.Serialize(department, options);
