@@ -24,6 +24,12 @@ public class Transaction
         Year = year;
         Value = value;
     }
+    
+
+    public override string ToString()
+    {
+        return $"{nameof(Trader)}: {Trader}, {nameof(Year)}: {Year}, {nameof(Value)}: {Value}";
+    }
 }
 
 public class MainClass
@@ -42,24 +48,35 @@ public class MainClass
     {
         // 1. 2011년에 일어난 모든 트랜잭션을 찾아 가격 기준 오름차순으로 정리하여 이름을 나열하시오
         //
-        
+
         Console.WriteLine("1. =======================");
         transactions.Where(e => e.Year == 2011)
             .OrderBy(e => e.Value)
             .ToList()
             .ForEach(e => Console.WriteLine(e.Trader.Name));
-        
+
         Console.WriteLine("2. =======================");
+
+        transactions.Where(e => e.Trader.City == "Cambridge")
+            .Select(e => e.Trader.Name)
+            .ToHashSet()
+            .Order()
+            .ToList()
+            .ForEach(e => Console.WriteLine(e));
+
+        
+        Console.WriteLine(transactions.Any(e => e.Trader.City == "Milan"));
+
+        int maxValue = transactions.Select(e => e.Value)
+            .Max();
     }
 }
-
-
 
 class Program
 {
     // delegate 함수를 저장할 타입을 선언 + 타입 Safety
     public delegate int MyDelegate(int a, int b);
-    
+
     // static void Main(string[] args)
     // {
     //     var list = new List<int> {1, 2, 3, 4, 5};
@@ -98,5 +115,4 @@ class Program
     // }
 
     int Add(int a, int b) => a + b;
-    
 }
