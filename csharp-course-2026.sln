@@ -6,6 +6,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Day01_OOP_Review.Tests", "D
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Day02_OOP_Funtion_고계함수", "Day02_OOP_Funtion_고계함수\Day02_OOP_Funtion_고계함수.csproj", "{6AF2DE28-2658-401C-AA78-08D28878DCAF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Day03_OOP_FileAndException", "Day03_OOP_FileAndException\Day03_OOP_FileAndException.csproj", "{F2EE3E44-B47A-4B41-806A-5241E2EF20E3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +26,9 @@ Global
 		{6AF2DE28-2658-401C-AA78-08D28878DCAF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6AF2DE28-2658-401C-AA78-08D28878DCAF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6AF2DE28-2658-401C-AA78-08D28878DCAF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F2EE3E44-B47A-4B41-806A-5241E2EF20E3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F2EE3E44-B47A-4B41-806A-5241E2EF20E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F2EE3E44-B47A-4B41-806A-5241E2EF20E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F2EE3E44-B47A-4B41-806A-5241E2EF20E3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
