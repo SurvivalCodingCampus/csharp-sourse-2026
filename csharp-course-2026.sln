@@ -10,6 +10,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Day02_Functions.Tests", "Da
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Day03_Exceptions", "Day03_Exceptions\Day03_Exceptions.csproj", "{B6F9409E-52D7-4131-9AEB-DF55E38628D4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Day04_Sync", "Day04_Sync\Day04_Sync.csproj", "{ABC56D21-5C29-4EB9-BEF5-152855BD68A5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,5 +38,9 @@ Global
 		{B6F9409E-52D7-4131-9AEB-DF55E38628D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B6F9409E-52D7-4131-9AEB-DF55E38628D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B6F9409E-52D7-4131-9AEB-DF55E38628D4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ABC56D21-5C29-4EB9-BEF5-152855BD68A5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ABC56D21-5C29-4EB9-BEF5-152855BD68A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ABC56D21-5C29-4EB9-BEF5-152855BD68A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ABC56D21-5C29-4EB9-BEF5-152855BD68A5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
