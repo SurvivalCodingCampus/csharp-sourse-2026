@@ -20,8 +20,8 @@ public class ExceptionPractice1N2
 위 기본식으로 오류가 터짐 따라서 아래 식으로 수정
 */
 
-
-
+//📌📌📌 한 파일에 main이 두개의 파일이 작성되어 오류뜸 | 잠깐 끔
+/*
 public class ExceptionPractice1N2
 {
     public static void Main(string[] args)
@@ -41,3 +41,4 @@ public class ExceptionPractice1N2
         
     }
 }
+*/
