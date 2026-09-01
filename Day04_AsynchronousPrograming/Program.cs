@@ -4,23 +4,15 @@ class Program
 {
     static async Task Main(string[] args)
     {
-        string bird1 = "꾸우";
-        string bird2 = "까악";
-        string bird3 = "짹짹";
+        Birds birds = new Birds("꾸우", "까악", "짹짹");
         for (int i = 0; i < 4; i++)
         {
-            Task.Delay(1000).Wait();
-            Console.WriteLine(bird1);
+            birds.birdOneSound();
+            birds.birdTwoSound();
+            birds.birdThreeSound();
         }
-        for (int i = 0; i < 4; i++)
-        {
-            Task.Delay(2000).Wait();
-            Console.WriteLine(bird2);
-        }
-        for (int i = 0; i < 4; i++)
-        {
-            Task.Delay(3000).Wait();
-            Console.WriteLine(bird3);
-        }
+        Console.WriteLine("프로그램 종료");
     }
+
+    
 }
