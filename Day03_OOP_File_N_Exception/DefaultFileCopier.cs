@@ -1,4 +1,7 @@
 using System.Diagnostics.Contracts;
+using System.Text.Encodings.Web;
+using System.Text.Json;
+
 namespace Day03_OOP_FileAndException;
 //2. 파일조작
 /*
@@ -35,7 +38,28 @@ public class DefaultFileCopier : IFileCopier
         
         //3. 파일 읽기
         string ss = File.ReadAllText("teeeeet.txt"); //📌 똑같은 변수명에 다른 파일(ss)을 넣을 수 없으므로 새로 정의하여 넣어야 한다
-
+        
+        
+        
+//3. 여러가지 데이터 형식
+/*
+총무부 리더 ‘홍길동(41세)’의 인스턴스를 생성하고 직렬화하여 company.json 파일에 Json String 형태로 저장하는 프로그램을 작성하시오.
+직렬화를 위해 위의 2개 클래스를 일부 수정이 필요하면 하시오.
+// 📌 붕어빵들 찍어내기
+*/
+        Employee e = new Employee("홍길동", 41);
+        Department d = new Department("총무부", e);
+        
+        // 이거 안쓰면 한글 깨짐
+        var options = new JsonSerializerOptions
+        {
+            Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+            WriteIndented = true
+        };
+        
+        //직렬(Serialization)
+        string jsonString = JsonSerializer.Serialize(d, options);
+        File.WriteAllText("company.json", jsonString);
     }
     public void CopyFile(string sourceFilePath, string destinationFilePath)
     {

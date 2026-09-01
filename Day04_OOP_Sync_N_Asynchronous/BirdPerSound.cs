@@ -13,7 +13,6 @@ namespace Day04_OOP_SyncNAsynchronous;
 
 public class BirdPerSound
 {
-    
     public static async Task FirstBirdSound()
     {
         for (int i = 1; i <= 4; i++)
@@ -22,7 +21,6 @@ public class BirdPerSound
             Console.WriteLine("꾸우");
         }
     }
-    
     public static async Task SecondBirdSound()
     {
         for (int i = 1; i <= 4; i++)
@@ -31,7 +29,6 @@ public class BirdPerSound
             Console.WriteLine("까악");
         }
     }
-    
     public static async Task ThirdBirdSound()
     {
         for (int i = 1; i <= 4; i++)
@@ -40,8 +37,6 @@ public class BirdPerSound
             Console.WriteLine("짹짹");
         }
     }
-    
-    
     //프로그램 종료됨을 알리는 코드
     static async Task Main()
     {
