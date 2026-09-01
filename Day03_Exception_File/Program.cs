@@ -6,6 +6,10 @@ class Program
 {
     static void Main(string[] args)
     {
+        
+        string numString = "10.5";
+        string fileName = Path.GetTempFileName();
+        
         var option = new JsonSerializerOptions();
         option.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
 
