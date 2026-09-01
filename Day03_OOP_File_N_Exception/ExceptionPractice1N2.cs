@@ -1,5 +1,6 @@
-/*namespace Day03_OOP_FileAndException;
-
+namespace Day03_OOP_File_N_Exception;
+//1. 예외 v
+/* 
 public class ExceptionPractice1N2
 {
     public static void Main(string[] args)
@@ -13,17 +14,14 @@ public class ExceptionPractice1N2
         {
             Console.WriteLine(e.Message);
             throw; // string 10.5가 맞지 않다는 예외처리가 발생 > 에러를 일단 미룸...
-            
         }
     }
 }
-static void SomeError()
-{
-    throw new ArgumentException("에러");
-}
+위 기본식으로 오류가 터짐 따라서 아래 식으로 수정
 */
-//---------------------------------------
-/*
+
+
+
 public class ExceptionPractice1N2
 {
     public static void Main(string[] args)
@@ -43,4 +41,3 @@ public class ExceptionPractice1N2
         
     }
 }
-*/

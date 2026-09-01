@@ -1,5 +1,5 @@
 namespace Day03_OOP_FileAndException;
-
+//여러가지 데이터 형식
 public class Employee
 {
     public string Name { get; }

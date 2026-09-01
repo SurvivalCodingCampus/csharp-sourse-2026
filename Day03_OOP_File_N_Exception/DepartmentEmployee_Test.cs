@@ -3,7 +3,7 @@ using System.Text.Json;
 
 namespace Day03_OOP_FileAndException;
 
-public class Program
+public class DepartmentEmployee_Test
 {
     static Employee e = new Employee("홍홍", 41);
     Department d = new Department("총무이름", e) ;
@@ -13,5 +13,5 @@ public class Program
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase
     };
 
-    public string jsonString = JsonSerializer.Serialize(user, options);
-}
+    // public string jsonString = JsonSerializer.Serialize(user, options);
+} 
