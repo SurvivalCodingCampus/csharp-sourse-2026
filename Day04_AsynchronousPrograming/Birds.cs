@@ -15,18 +15,28 @@ public class Birds
     
     public async Task birdOneSound()
     {
-        Task.Delay(1000);
-        Console.WriteLine(Bird1);
+        for (int i = 0; i < 4; i++)
+        {
+            await Task.Delay(1000);
+            Console.WriteLine(Bird1);
+        }
+
     }
     public async Task birdTwoSound()
     {
-        Task.Delay(2000);
-        Console.WriteLine(Bird2);
+        for (int i = 0; i < 4; i++)
+        {
+            await Task.Delay(2000);
+            Console.WriteLine(Bird2);
+        }
     }
     public async Task birdThreeSound()
     {
-        Task.Delay(3000);
-        Console.WriteLine(Bird3);
+        for (int i = 0; i < 4; i++)
+        {
+            await Task.Delay(3000);
+            Console.WriteLine(Bird3);
+        }
     }
 }
 

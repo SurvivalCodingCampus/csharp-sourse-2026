@@ -5,13 +5,18 @@ class Program
     static async Task Main(string[] args)
     {
         Birds birds = new Birds("꾸우", "까악", "짹짹");
-        for (int i = 0; i < 4; i++)
-        {
-            birds.birdOneSound();
-            birds.birdTwoSound();
-            birds.birdThreeSound();
-        }
-        Console.WriteLine("프로그램 종료");
+        
+        Task birdOneTask = birds.birdOneSound();
+        Task birdTwoTask = birds.birdTwoSound();
+        Task birdThreeTask = birds.birdThreeSound();
+
+        await Task.WhenAll(
+            birdOneTask,
+            birdTwoTask,
+            birdThreeTask
+        );
+
+        Console.WriteLine("모든 새소리가 끝났습니다.");
     }
 
     
