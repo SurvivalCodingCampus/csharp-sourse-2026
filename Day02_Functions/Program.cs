@@ -46,14 +46,14 @@ public class MainClass
             .ToList()
             .ForEach(e => Console.WriteLine(e.Trader.Name));
         Console.WriteLine();
-        
+
         Console.WriteLine("2. 거래자가 근무하는 모든 도시를 중복 없이 나열하시오");
         transactions.Select(e => e.Trader.City)
             .ToHashSet()
             .ToList()
             .ForEach(e => Console.WriteLine(e));
         Console.WriteLine();
-        
+
         Console.WriteLine("3. 케임브리지에서 근무하는 모든 거래자를 찾아서 이름순으로 정렬하여 나열하시오");
         transactions.Where(e => e.Trader.City == "Cambridge")
             .Select(e => e.Trader.Name)
@@ -62,15 +62,15 @@ public class MainClass
             .ToList()
             .ForEach(e => Console.WriteLine(e));
         Console.WriteLine();
-        
+
         Console.WriteLine("4. 모든 거래자의 이름을 알파벳순으로 정렬하여 나열하시오");
-        transactions.Select(e=>e.Trader.Name)
-            .OrderBy(e=>e.ToString())
+        transactions.Select(e => e.Trader.Name)
+            .OrderBy(e => e.ToString())
             .ToHashSet()
             .ToList()
             .ForEach(e => Console.WriteLine(e));
         Console.WriteLine();
-        
+
         Console.WriteLine("5. 밀라노에 거래자가 있는가?");
         transactions.Where(e => e.Trader.City == "Milan")
             .Select(e => e.Trader.Name)
@@ -78,7 +78,7 @@ public class MainClass
             .ToList()
             .ForEach(e => Console.WriteLine(e));
         Console.WriteLine();
-        
+
         Console.WriteLine("6. 케임브리지에 거주하는 거래자의 모든 트랙잭션값을 출력하시오");
         transactions
             .Where(e => e.Trader.City == "Cambridge")
@@ -88,21 +88,18 @@ public class MainClass
                     $"Name: {e.Trader.Name}, City: {e.Trader.City}, Year: {e.Year}, Price: {e.Value}"
                 ));
         Console.WriteLine();
-        
+
         Console.WriteLine("7. 전체 트랜잭션 중 최대값은 얼마인가?");
         int maxResult = transactions
             .Select(e => e.Value)
             .Aggregate((e, v) => Math.Max(e, v));
 
         Console.WriteLine(maxResult);
-
     }
 }
 
-
 class Program
 {
-    
     // static void Main(string[] args)
     // {
     //     // delegate 함수를 저장할 타입을 선언 + 타입 Safety
