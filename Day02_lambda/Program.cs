@@ -43,49 +43,48 @@ class Program
         public static void Main(string[] args)
         {
             Console.WriteLine("1.========");
-            transactions.Where(e=>e.Year==2011)
-                .OrderBy(e=>e.Value)
+            transactions.Where(e => e.Year == 2011)
+                .OrderBy(e => e.Value)
                 .ToList()
-                .ForEach(e=>Console.WriteLine(e.Trader.Name));
-            
+                .ForEach(e => Console.WriteLine(e.Trader.Name));
+
             Console.WriteLine("2.========");
-            transactions.Select(e=>e.Trader.City)
+            transactions.Select(e => e.Trader.City)
                 .Distinct()
                 .ToList()
-                .ForEach(city=>Console.WriteLine(city));
-            
+                .ForEach(city => Console.WriteLine(city));
+
             Console.WriteLine("3.========");
-            transactions.Select(e=>e.Trader)
+            transactions.Select(e => e.Trader)
                 .Where(trader => trader.City == "Cambridge")
-                .DistinctBy(trader=>trader.Name)
+                .DistinctBy(trader => trader.Name)
                 .ToList()
-                .ForEach(trader=>Console.WriteLine(trader.Name));
-            
+                .ForEach(trader => Console.WriteLine(trader.Name));
+
             Console.WriteLine("4.========");
-            transactions.Select(e=>e.Trader.Name)
+            transactions.Select(e => e.Trader.Name)
                 .Distinct()
-                .OrderBy(name=>name)
+                .OrderBy(name => name)
                 .ToList()
-                .ForEach(name=>Console.WriteLine(name));
-            
+                .ForEach(name => Console.WriteLine(name));
+
             Console.WriteLine("5.========");
             bool hasMilanTrader = transactions.Any(e => e.Trader.City == "Milan");
             Console.WriteLine(hasMilanTrader ? "밀라노에 거래자 있음" : "밀라노에 거래자 없음");
-            
+
             Console.WriteLine("6.========");
-            transactions.Where(e=>e.Trader.City=="Cambridge")
-                .Select(e=>e.Value)
+            transactions.Where(e => e.Trader.City == "Cambridge")
+                .Select(e => e.Value)
                 .ToList()
-                .ForEach(val=>Console.WriteLine(val));
-            
+                .ForEach(val => Console.WriteLine(val));
+
             Console.WriteLine("7.========");
             int maxValue = transactions.Max(e => e.Value);
             Console.WriteLine($"최댓값:{maxValue}");
-            
+
             Console.WriteLine("8.========");
             int minValue = transactions.Min(e => e.Value);
             Console.WriteLine($"최솟값 : {minValue}");
         }
     }
-
 }

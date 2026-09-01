@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net10.0</TargetFrameworks>
+    
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="JetBrains.Annotations" Version="2026.2.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.9.0" />
+    <PackageReference Include="MSTest.TestAdapter" Version="4.3.3" />
+    <PackageReference Include="MSTest.TestFramework" Version="4.3.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Day03_File\Day03_File.csproj" />
+    <ProjectReference Include="..\Day03_Serialization\Day03_Serialization.csproj" />
+  </ItemGroup>
+  
+</Project>

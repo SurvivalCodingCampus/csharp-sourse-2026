@@ -1,0 +1,1 @@
+﻿[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("Day03_File.Tests")]
