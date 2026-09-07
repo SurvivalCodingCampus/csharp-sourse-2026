@@ -8,15 +8,16 @@ asyncExam.FetchData(result =>
 
 
 Console.WriteLine("복사 시작");
-File.WriteAllTextAsync("text.txt", "Hello World")
-    .ContinueWith(task =>
-    {
-        Console.WriteLine("복사 끝");
-    });
+
+await File.WriteAllTextAsync("text.txt", "Hello World");
+    
+Console.WriteLine("복사 끝");
+    
 
 // 3초 대기
-Task.Delay(3000)
-    .ContinueWith(task => Console.WriteLine("3초 끝"));
+await Task.Delay(3000);
+
+Console.WriteLine("3초 끝");
 
 Console.WriteLine("프로그램 끝");
 
