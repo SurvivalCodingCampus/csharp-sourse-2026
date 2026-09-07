@@ -45,7 +45,7 @@ public class JsonFileDataSource : IDataSource
     public async Task SavePeopleAsync(List<Person> people)
     {
         string jsonString = JsonSerializer.Serialize(people, option);
-        await File.WriteAllTextAsync("people.json",jsonString, Encoding.UTF8);
+        await File.WriteAllTextAsync(Path,jsonString, Encoding.UTF8);
     }
 
     // 테스트용 Json파일 리스트 초기화
