@@ -4,6 +4,7 @@ class Program
 {
     static void Main(string[] args)
     {
-        Console.WriteLine("Hello, World!");
+        Cleric cleric = new Cleric("test", 10, 3);
+        cleric.SelfAid();
     }
 }
