@@ -1,9 +1,10 @@
 ﻿namespace Day01_OOP_Review;
 
-class Program
+internal class Program
 {
-    static void Main(string[] args)
+    private static void Main(string[] args)
     {
-        Console.WriteLine("Hello, World!");
+        var cleric = new Cleric("test", 10, 3);
+        cleric.SelfAid();
     }
 }
