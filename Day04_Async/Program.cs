@@ -21,6 +21,7 @@ class Program
 
     }
 
+
     // 새가 지정된 간격으로 소리를 내는 비동기 함수
     static async Task SingBirdAsync(string sound, int intervalMs, int repeatCount)
     {
