@@ -10,6 +10,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Day03_Exception_File", "Day
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Day04_Async", "Day04_Async\Day04_Async.csproj", "{0F75138C-30A8-4D9B-905B-1AF664180913}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Day05_DataSource", "Day05_DataSource\Day05_DataSource.csproj", "{17BFE438-FC9A-4918-9F39-FE90BEA85A25}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,5 +38,9 @@ Global
 		{0F75138C-30A8-4D9B-905B-1AF664180913}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0F75138C-30A8-4D9B-905B-1AF664180913}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0F75138C-30A8-4D9B-905B-1AF664180913}.Release|Any CPU.Build.0 = Release|Any CPU
+		{17BFE438-FC9A-4918-9F39-FE90BEA85A25}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{17BFE438-FC9A-4918-9F39-FE90BEA85A25}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{17BFE438-FC9A-4918-9F39-FE90BEA85A25}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{17BFE438-FC9A-4918-9F39-FE90BEA85A25}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
