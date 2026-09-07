@@ -13,7 +13,7 @@ public class JsonFileDataSource : IDataSource
     public JsonFileDataSource(string path)
     {
         Path = path;
-        InitJsonTextAsync(Path).Wait();
+        // InitJsonTextAsync(Path).Wait();
     }
 
     private JsonSerializerOptions option = new JsonSerializerOptions{
