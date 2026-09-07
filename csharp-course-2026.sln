@@ -10,6 +10,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Day03_Exception_File", "Day
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Day03_Exception_File_Test", "Day03_Exception_File_Test\Day03_Exception_File_Test.csproj", "{196B7301-C8ED-4A8C-8003-BC3C3CF85D51}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Day04_Async", "Day04_Async\Day04_Async.csproj", "{B179C78A-5A00-4E5B-9235-4BB32DAEAF87}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,5 +38,9 @@ Global
 		{196B7301-C8ED-4A8C-8003-BC3C3CF85D51}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{196B7301-C8ED-4A8C-8003-BC3C3CF85D51}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{196B7301-C8ED-4A8C-8003-BC3C3CF85D51}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B179C78A-5A00-4E5B-9235-4BB32DAEAF87}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B179C78A-5A00-4E5B-9235-4BB32DAEAF87}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B179C78A-5A00-4E5B-9235-4BB32DAEAF87}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B179C78A-5A00-4E5B-9235-4BB32DAEAF87}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
