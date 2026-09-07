@@ -2,11 +2,13 @@
 
     <PropertyGroup>
         <TargetFramework>net10.0</TargetFramework>
+        <OutputType>Exe</OutputType>
+        <GenerateProgramFile>false</GenerateProgramFile>
         <LangVersion>latest</LangVersion>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <IsPackable>false</IsPackable>
-        <RootNamespace>Day04_Synchronous</RootNamespace>
+        <RootNamespace>Day05_DataSource</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
