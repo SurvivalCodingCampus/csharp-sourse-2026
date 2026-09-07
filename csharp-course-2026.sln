@@ -8,6 +8,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Day02_Functions", "Day02_Fu
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Day03_Exception", "Day03_Exception\Day03_Exception.csproj", "{F2C42611-CD32-42DB-88E4-964604BF8FF6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Day04_Asynchronous", "Day04_Asynchronous\Day04_Asynchronous.csproj", "{441E2CF9-C1C5-4554-9B9D-2BD255DBFA5F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +32,9 @@ Global
 		{F2C42611-CD32-42DB-88E4-964604BF8FF6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F2C42611-CD32-42DB-88E4-964604BF8FF6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F2C42611-CD32-42DB-88E4-964604BF8FF6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{441E2CF9-C1C5-4554-9B9D-2BD255DBFA5F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{441E2CF9-C1C5-4554-9B9D-2BD255DBFA5F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{441E2CF9-C1C5-4554-9B9D-2BD255DBFA5F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{441E2CF9-C1C5-4554-9B9D-2BD255DBFA5F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
