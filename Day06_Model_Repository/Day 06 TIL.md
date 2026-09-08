@@ -58,6 +58,6 @@
 - 프레임워크별로 Assert 메서드명이 다르다.
 - Import에서 하는 using과 class 내부에서 쓰는 using은 다르다. <br>
 => class 안 내부 using은 읽어오고 using 블록문이 끝나면 스스로 닫는다. <br>
-=> using을 사용 시, stream을 써야한다.
+=> using 문은 IDisposable 객체를 범위 종료 시 정리한다.
 
 

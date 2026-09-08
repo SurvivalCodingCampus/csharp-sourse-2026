@@ -32,16 +32,27 @@ public class InventoryRepository : IInventoryRepository
     public async Task<bool> AddItemAsync(Item item)
     {
         var items = await GetItemsAsync();
-        var sameCheck = await GetItemByIdAsync(item.Id);
+        var sameCheck = items.FirstOrDefault(e => e.Id == item.Id);
         
         if (sameCheck != null)
         {
-            if (sameCheck.Count >= MaxStack)
+            int available = MaxStack - sameCheck.Count;
+            
+            if (available <= 0)
             {
                 Console.WriteLine($"{sameCheck.Name} 해당 아이템은 99개로 가득 찼습니다.");
                 return false;
             }
-            sameCheck.Count += item.Count;
+
+            if (item.Count > available)
+            {
+                sameCheck.Count += available;
+                Console.WriteLine($"{sameCheck.Name}을 {available}개 만큼 채우고 가득 찼습니다.");
+            }
+            else
+            {
+                sameCheck.Count += item.Count;
+            }
         }
         else
         {
@@ -52,6 +63,7 @@ public class InventoryRepository : IInventoryRepository
             }
             items.Add(item);
         }
+        
         await _itemDataSource.SaveAllItemsAsync(items);
         return true;
     }

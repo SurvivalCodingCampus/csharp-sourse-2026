@@ -33,6 +33,6 @@ public class JsonFileItemDataSource : IItemDataSource
     public async Task SaveAllItemsAsync(List<Item> items)
     {
         using FileStream openStream = File.OpenWrite(_fileName);
-        var item = JsonSerializer.SerializeAsync(openStream, items, _jsonSerializerOptions);
+        await JsonSerializer.SerializeAsync(openStream, items, _jsonSerializerOptions);
     }
 }
