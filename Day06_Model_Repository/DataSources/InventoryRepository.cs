@@ -33,6 +33,7 @@ public class InventoryRepository(IItemDataSource source, int maxSlot, int maxSta
     {
         // 인벤토리 전체 데이터 가져오기
         List<Item> itemList = await Source.LoadAllItemsAsync();
+        _cureentList = itemList;
         
         var findItem = itemList.Find(n => n.ItemId == item.ItemId);
         

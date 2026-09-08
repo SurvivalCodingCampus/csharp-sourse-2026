@@ -25,13 +25,13 @@ public class ItemDataSource(string path = "ItemList.json") : IItemDataSource
         {
             await File.WriteAllTextAsync(Path, "[]");
         
-            var items = JsonSerializer.Deserialize<List<Item>>(Path, _option);
-            if (items is null)
-            {
-                throw new  Exception("Path not found");
-            }
+            // var items = JsonSerializer.Deserialize<List<Item>>(Path, _option);
+            // if (items is null)
+            // {
+            //     throw new  Exception("Path not found");
+            // }
 
-            return await Task.FromResult(items);
+            return [];
         }
 
         await using Stream stream = File.OpenRead(Path);
