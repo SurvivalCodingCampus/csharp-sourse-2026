@@ -1,3 +1,6 @@
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
 namespace Day06_OOP_Model_N_Repository.Data.Repositories;
 
 public interface IInventoryRepository {

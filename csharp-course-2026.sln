@@ -14,6 +14,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Day05_DataSource", "Day05_D
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Day06_OOP_Model_N_Repository", "Day06_OOP_Model_N_Repository\Day06_OOP_Model_N_Repository.csproj", "{D0D66699-9C2B-4DB1-A1B6-8EAC77B7B9BF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Day06_OOP_Model_N_Repository_Test", "Day06_OOP_Model_N_Repository_Test\Day06_OOP_Model_N_Repository_Test.csproj", "{D3950598-4956-49DA-A8CD-94F29A022817}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -48,5 +50,9 @@ Global
 		{D0D66699-9C2B-4DB1-A1B6-8EAC77B7B9BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D0D66699-9C2B-4DB1-A1B6-8EAC77B7B9BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D0D66699-9C2B-4DB1-A1B6-8EAC77B7B9BF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D3950598-4956-49DA-A8CD-94F29A022817}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D3950598-4956-49DA-A8CD-94F29A022817}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D3950598-4956-49DA-A8CD-94F29A022817}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D3950598-4956-49DA-A8CD-94F29A022817}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
