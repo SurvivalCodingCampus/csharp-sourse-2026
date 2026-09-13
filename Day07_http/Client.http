@@ -1,0 +1,68 @@
+### GET 요청
+
+GET https://api.example.com/data
+Accept: application/json
+
+### POST 요청
+POST https://api.example.com/create
+Content-Type: application/json
+{
+    "title": "Test Post",
+    "body": "This is a test post body"
+}
+
+### PUT 요청
+PUT https://api.example.com/update/1
+Content-Type: application/json
+{
+    "title": "Updated Title",
+    "body": "This is an updated body"
+}
+
+### PATCH 요청
+PATCH https://api.example.com/patch/1
+Content-Type: application/json
+{
+"title": "Patched Title"
+}
+
+### DELETE 요청
+DELETE https://api.example.com/delete/1
+
+
+
+### 모두 얻기
+GET https://jsonplaceholder.typicode.com/posts
+
+### 1개 얻기
+GET https://jsonplaceholder.typicode.com/posts/1
+
+###
+POST https://jsonplaceholder.typicode.com/posts
+Content-Type: application/json
+{
+    "title": "foo",
+    "body": "bar",
+    "userId": 1
+}
+
+### 일부 수정
+PATCH https://jsonplaceholder.typicode.com/posts/1
+Content-Type: application/json
+{
+    "title": "foo",
+    "userId": 1
+}
+
+### 전체 수정
+PUT https://jsonplaceholder.typicode.com/posts/1
+Content-Type: application/json
+{
+    "title": "foo",
+    "body": "bar",
+    "userId": 1
+}
+
+### 삭제
+DELETE https://jsonplaceholder.typicode.com/posts/1
+
