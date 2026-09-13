@@ -7,8 +7,7 @@ namespace Day06_OOP_Model_N_Repository_Test;
 public class Tests {
     public class MockItemDataSource : IItemDataSource {
 
-        private List<Item> _items = new List<Item>
-        {
+        private List<Item> _items = new List<Item> {
             new Item("용사1", "Sward", 1),
             new Item("용사2", "Shield", 1)
         };
@@ -28,20 +27,17 @@ public class Tests {
         
     }
 
-    [SetUp]
-    public void Setup() {
-       
-    }
 
     [Test]
     [Description("테스트 케이스 1. 인벤토리 초기화 및 로드")]
     public async Task Test1() {
         //Given
-        MockItemDataSource itemDataSource = new MockItemDataSource();
+
+        MockItemDataSource itemDataSource = new ();
         
         // itemDataSource인스턴스한 변수이름을 넣어서 부모와 자기 자신 모두 불러와 정보를 넣겠다는 의미로 아래 넣음
         //초기화한 로직
-        InventoryRepository inventoryRepositoryInfo = new InventoryRepository(3, 9, itemDataSource );
+        InventoryRepository inventoryRepositoryInfo = new (3, 9, itemDataSource );
         
         //When
         var items = await itemDataSource.LoadAllItemsAsync();
@@ -50,8 +46,19 @@ public class Tests {
         Assert.That(items[0].Name, Is.EqualTo("Sward"));
         Assert.That(items[1].Name, Is.EqualTo("Shield"));
     }
-    
-    
+
 }
+
+
+/*
+tl;dr:  IItemDataSource가 부모이므로 item 목록 불러와
+        가짜데이터(MockItemDataSource)에 준비된 초기 아이템 목록을 불러옴
+        첫번째와 두번째 아이템의 이름이 각각 'Sward'와 'Shield'가 맞는지 확인
+        
+        
+        
+        
+*/
+
 
 
