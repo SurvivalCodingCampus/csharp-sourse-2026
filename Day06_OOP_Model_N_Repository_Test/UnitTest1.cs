@@ -6,10 +6,7 @@ namespace Day06_OOP_Model_N_Repository_Test;
 
 public class Tests {
     public class MockItemDataSource : IItemDataSource {
-<<<<<<< HEAD
-=======
 
->>>>>>> temp-work
         private List<Item> _items = new List<Item> {
             new Item("용사1", "Sward", 1),
             new Item("용사2", "Shield", 1)
@@ -31,18 +28,12 @@ public class Tests {
     }
 
 
-<<<<<<< HEAD
 
-=======
->>>>>>> temp-work
     [Test]
     [Description("테스트 케이스 1. 인벤토리 초기화 및 로드")]
     public async Task Test1() {
         //Given
-<<<<<<< HEAD
-=======
 
->>>>>>> temp-work
         MockItemDataSource itemDataSource = new ();
         
         // itemDataSource인스턴스한 변수이름을 넣어서 부모와 자기 자신 모두 불러와 정보를 넣겠다는 의미로 아래 넣음
@@ -56,10 +47,7 @@ public class Tests {
         Assert.That(items[0].Name, Is.EqualTo("Sward"));
         Assert.That(items[1].Name, Is.EqualTo("Shield"));
     }
-<<<<<<< HEAD
-=======
 
->>>>>>> temp-work
 }
 
 
@@ -73,9 +61,4 @@ tl;dr:  IItemDataSource가 부모이므로 item 목록 불러와
         
 <<<<<<< HEAD
 */
-=======
-*/
 
-
-
->>>>>>> temp-work
