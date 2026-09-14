@@ -7,8 +7,6 @@ using System.Linq;
 public class Program {
     static async Task Main(string[] args)
     {
-
-
         IDataSource dataSource = new JsonFileDataSource("people.json");
         //데이터를 불러와 필터링 하는 로직
         var people = await dataSource.GetPeopleAsync();
