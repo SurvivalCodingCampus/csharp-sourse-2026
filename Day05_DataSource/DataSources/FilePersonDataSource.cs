@@ -17,6 +17,8 @@ public class FilePersonDataSource : IPersonDataSource
     
     public Task<Person> GetPerson(string name)
     {
+        File.Open("person.json", FileMode.OpenOrCreate);
+        
         try
         {
             Person? person = JsonSerializer.Deserialize<Person>(
