@@ -66,7 +66,7 @@ public class JsonFileDataSource : IDataSource
     // 테스트용 Json파일 리스트 초기화
     public async Task InitJsonTextAsync(string path)
     {
-        if (File.Exists("DefaultPeople.json"))
+        if (!File.Exists("DefaultPeople.json"))
         {
             await File.Create("DefaultPeople.json").DisposeAsync();
         }

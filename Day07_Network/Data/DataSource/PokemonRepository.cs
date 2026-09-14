@@ -11,6 +11,10 @@ public class PokemonRepository(IPokemonApiDataSource source) : IPokemonRepositor
     public async Task<Pokemon?> GetPokemonByNameAsync(string pokemonName)
     {
         Response response = await source.GetPokemonAsync(pokemonName);
+        if (response.StatusCode == 404)
+        {
+            throw new Exception("Pokemon not found");
+        }
 
         Pokemon? pokemon = JsonConvert.DeserializeObject<Pokemon>(response.Body);
 
