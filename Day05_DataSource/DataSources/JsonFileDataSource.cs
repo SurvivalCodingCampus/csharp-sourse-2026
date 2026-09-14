@@ -13,7 +13,7 @@ public class JsonFileDataSource : IDataSource
     public JsonFileDataSource(string path)
     {
         Path = path;
-        if (File.Exists(path))
+        if (!File.Exists(path))
         {
             InitJsonTextAsync(Path).Wait();
         }
@@ -26,6 +26,7 @@ public class JsonFileDataSource : IDataSource
 
     /*
     Async 사용하기 전
+    */
     public Task<List<Person>> GetPeopleAsync()
     {
         try
@@ -46,16 +47,15 @@ public class JsonFileDataSource : IDataSource
             throw;
         }
     }
-    */
 
-    public async Task<List<Person>> GetPeopleAsync()
-    {
-        await using Stream json = File.OpenRead(Path);
-        var people = await JsonSerializer.DeserializeAsync<List<Person>>(json, _option);
-        if (people is null) throw new Exception("Path not found");
-
-        return await Task.FromResult(people);
-    }
+    // public async Task<List<Person>> GetPeopleAsync()
+    // {
+    //     await using Stream json = File.OpenRead(Path);
+    //     var people = await JsonSerializer.DeserializeAsync<List<Person>>(json, _option);
+    //     if (people is null) throw new Exception("Path not found");
+    //
+    //     return await Task.FromResult(people);
+    // }
 
     public async Task SavePeopleAsync(List<Person> people)
     {   

@@ -3,29 +3,29 @@ using Day06_Model_Repository.Models;
 
 namespace Day06_Model_Repository.DataSources;
 
-public class InventoryRepository(IItemDataSource source, int maxSlot, int maxStack) : IInventoryRepository
+public class InventoryRepository(IItemDataSource source, int maxSlot = 5, int maxStack = 10) : IInventoryRepository
 {
-    public IItemDataSource Source { get; set; } = source;
+    private IItemDataSource Source { get; set; } = source;
     public int MaxSlot { get; private set; } = maxSlot;
     public int MaxStack { get; private set; } = maxStack;
 
-    private List<Item> _cureentList; 
+    private List<Item>? _currentList; 
 
 
     // 모든 아이템 목록을 비동기로 가져옴
     public async Task<List<Item>> GetItemsAsync()
     {
-        return _cureentList = await Task.FromResult(await Source.LoadAllItemsAsync());
+        return _currentList = await Task.FromResult(await Source.LoadAllItemsAsync());
     }
 
     // 특정 아이템을 비동기적으로 검색
     public Task<Item?> GetItemByIdAsync(int itemId)
     {
-        if (_cureentList is null)
+        if (_currentList is null)
         {
-            _cureentList = GetItemsAsync().Result;
+            _currentList = GetItemsAsync().Result;
         }
-        return Task.FromResult(_cureentList.Find(n => n.ItemId == itemId));
+        return Task.FromResult(_currentList.Find(n => n.ItemId == itemId));
     }
 
     // 아이템을 인벤토리에 추가하는 메서드 성공시 True, 실패시 False 반환
@@ -33,7 +33,7 @@ public class InventoryRepository(IItemDataSource source, int maxSlot, int maxSta
     {
         // 인벤토리 전체 데이터 가져오기
         List<Item> itemList = await Source.LoadAllItemsAsync();
-        _cureentList = itemList;
+        _currentList = itemList;
         
         var findItem = itemList.Find(n => n.ItemId == item.ItemId);
         
