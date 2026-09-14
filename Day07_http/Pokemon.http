@@ -1,0 +1,4 @@
+### 킬라플로르(Glimmora) 정보 조회
+GET https://pokeapi.co/api/v2/pokemon/glimmora
+Accept: application/json
+
