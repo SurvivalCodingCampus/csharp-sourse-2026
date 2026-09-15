@@ -24,6 +24,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Day06_ModelRepository", "Da
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Day06_ModelRepository.Tests", "Day06_ModelRepository.Tests\Day06_ModelRepository.Tests.csproj", "{174716E4-B01A-4375-B0B4-2AC7BE00309D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Day07_Pokemon", "Day07_Pokemon\Day07_Pokemon.csproj", "{7589849D-A94C-4FA7-84EA-2E6C7FE88370}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Day07_Pokemon.Tests", "Day07_Pokemon.Tests\Day07_Pokemon.Tests.csproj", "{AF2A3B8B-3707-4822-B88B-860D2DF2EB4D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -78,5 +82,13 @@ Global
 		{174716E4-B01A-4375-B0B4-2AC7BE00309D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{174716E4-B01A-4375-B0B4-2AC7BE00309D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{174716E4-B01A-4375-B0B4-2AC7BE00309D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7589849D-A94C-4FA7-84EA-2E6C7FE88370}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7589849D-A94C-4FA7-84EA-2E6C7FE88370}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7589849D-A94C-4FA7-84EA-2E6C7FE88370}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7589849D-A94C-4FA7-84EA-2E6C7FE88370}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AF2A3B8B-3707-4822-B88B-860D2DF2EB4D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AF2A3B8B-3707-4822-B88B-860D2DF2EB4D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AF2A3B8B-3707-4822-B88B-860D2DF2EB4D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AF2A3B8B-3707-4822-B88B-860D2DF2EB4D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
