@@ -1,6 +1,6 @@
-using Day07_Network.Data.DataSource;
+using Day07_Network.Data.DataSources;
 
-namespace Day07_Network.Data.Interface;
+namespace Day07_Network.Data.Interfaces;
 
 public interface IPokemonApiDataSource
 {

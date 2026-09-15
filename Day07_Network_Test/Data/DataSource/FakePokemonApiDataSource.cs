@@ -1,8 +1,9 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
-using Day07_Network.Data.DataSource;
-using Day07_Network.Data.Interface;
+using Day07_Network.Data.DataSources;
+using Day07_Network.Data.Interfaces;
 using Newtonsoft.Json;
 
 namespace Day07_Network_Test.Data.DataSource;
@@ -69,11 +70,25 @@ public class FakePokemonApiDataSource : IPokemonApiDataSource
 
                                         """;
 
-    public Task<Response> GetPokemonAsync(string pokemonName)
+    public async Task<Response> GetPokemonAsync(string pokemonName)
     {
-        var response = new Response(200,
+        if (pokemonName == "zapdos")
+        {
+            return new Response(200,
+                new Dictionary<string, string>(),
+                _fakeJson);
+        }
+
+        if (pokemonName == "unknown")
+        {
+          return new Response(
+            404,
             new Dictionary<string, string>(),
-            _fakeJson);
-        return Task.FromResult(response);
+            "unknown"
+          );
+        }
+
+        throw new ArgumentException();
+
     }
 }

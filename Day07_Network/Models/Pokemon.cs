@@ -1,7 +1,6 @@
-using System.Text.Json.Serialization;
 using Newtonsoft.Json;
 
-namespace Day07_Network.Model;
+namespace Day07_Network.Models;
 
 public class Pokemon
 {
@@ -16,6 +15,8 @@ public class Pokemon
     
     [JsonProperty("types")] 
     public Types[]? Types { get; set; }
+    
+    
 }
 
 public class PokemonSprites

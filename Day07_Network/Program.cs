@@ -1,5 +1,5 @@
-﻿using Day07_Network.Data.DataSource;
-using Day07_Network.Data.Interface;
+﻿using Day07_Network.Data.DataSources;
+using Day07_Network.Data.Interfaces;
 
 namespace Day07_Network;
 
@@ -12,6 +12,6 @@ class Program
         IPokemonApiDataSource pokemonApiDataSource = new PokemonApiDataSource(new HttpClient());
         IPokemonRepository repository = new PokemonRepository(pokemonApiDataSource);
 
-        Console.WriteLine(repository.GetPokemonByNameAsync("ZapDos").Result.Sprites.Other.OfficialArtwork.FrontDefault);
+        Console.WriteLine(repository.GetPokemonByNameAsync("ZapDos").Result);
     }
 }

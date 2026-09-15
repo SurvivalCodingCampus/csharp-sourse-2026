@@ -1,6 +1,6 @@
-using Day07_Network.Model;
+using Day07_Network.Models;
 
-namespace Day07_Network.Data.Interface;
+namespace Day07_Network.Data.Interfaces;
 
 public interface IPokemonRepository
 {

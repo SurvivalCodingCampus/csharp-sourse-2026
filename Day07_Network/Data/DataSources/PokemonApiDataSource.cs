@@ -1,9 +1,8 @@
 using System.Text;
-using System.Text.Json.Nodes;
-using Day07_Network.Data.Interface;
+using Day07_Network.Data.Interfaces;
 using Newtonsoft.Json;
 
-namespace Day07_Network.Data.DataSource;
+namespace Day07_Network.Data.DataSources;
 
 public class PokemonApiDataSource(HttpClient _httpClient) : IPokemonApiDataSource
 {

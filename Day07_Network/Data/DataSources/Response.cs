@@ -1,4 +1,4 @@
-namespace Day07_Network.Data.DataSource;
+namespace Day07_Network.Data.DataSources;
 
 public class Response
 {
