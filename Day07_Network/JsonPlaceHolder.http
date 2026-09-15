@@ -1,0 +1,36 @@
+### Posts 받기
+GET https://jsonplaceholder.typicode.com/posts
+
+### POST 하나 받기
+GET https://jsonplaceholder.typicode.com/posts/1
+
+### POST
+POST https://jsonplaceholder.typicode.com/posts
+Content-Type: application/json
+
+{
+    "userId": 12,
+    "title": "test",
+    "body": "test"
+}
+
+### PATCH 일부 수정
+PATCH https://jsonplaceholder.typicode.com/posts/1
+Content-Type: application/json
+
+{
+  "title": "PatchChange",
+  "body": "ㅇㅅㅇ"
+}
+
+### PUT 전체 수정
+PUT https://jsonplaceholder.typicode.com/posts/1
+Content-Type: application/json
+
+{
+  "userId": 12,
+  "title": "PUTChange"
+}
+
+### DELETE 삭제
+DELETE https://jsonplaceholder.typicode.com/posts/1
