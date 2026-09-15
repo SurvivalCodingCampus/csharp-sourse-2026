@@ -5,25 +5,33 @@ using Newtonsoft.Json;
 namespace Day07_HTTP;
 using System.Net.Http.Json;
 
-public class PokemonRepository : IPokemonRepository
+public class PokemonRepository(IPokemonApiDataSource<Pokemon> dataSource) : IPokemonRepository
 {
     //Data organization 데이터 정리
-    private readonly IPokemonApiDataSource<Pokemon> _apiDataSource;
+    //private readonly IPokemonApiDataSource<Pokemon> _apiDataSource;
 
-    public PokemonRepository(IPokemonApiDataSource<Pokemon> apiDataSource)
-    {
-        _apiDataSource = apiDataSource;
-    }
+    //public PokemonRepository(IPokemonApiDataSource<Pokemon> apiDataSource)
+    //{
+    //    _apiDataSource = apiDataSource;
+    //}
 
+    
     public async Task<Pokemon?> GetPokemonByNameAsync(string pokemonName)
     {
-        var response = await _apiDataSource.GetByNameAsync(pokemonName);
-        return response.StatusCode == 200 ? response.Body : null;
+        try
+        {
+            var response = await dataSource.GetByNameAsync(pokemonName);
+            return response.StatusCode == 200 ? response.Body : null;
+        }
+        catch(Exception)
+        {
+            return null;
+        }
     }
 
     public async Task<Pokemon?> GetPokemonByIdAsync(int pokemonId)
     {
-        var response = await _apiDataSource.GetByIdAsync(pokemonId);
+        var response = await dataSource.GetByIdAsync(pokemonId);
         return response.StatusCode == 200 ? response.Body : null;
     }
 
