@@ -55,7 +55,7 @@ public class PokemonRepositoryTest
         Pokemon pokemon = await _repository.GetPokemonByNameAsync(_zapdos);
 
         Assert.That(pokemon, Is.Not.Null);
-        Assert.That(pokemon.Sprites.Other.OfficialArtwork.FrontDefault,
+        Assert.That(pokemon.Sprites?.Other?.OfficialArtwork?.FrontDefault,
             Is.EqualTo(
                 "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/145.png")
         );
