@@ -36,18 +36,24 @@ public class InventoryRepository : IInventoryRepository
         throw new NotImplementedException();
     }
 
-    public Task<Item?> GetItemByldAsync(int ItemId)
+    public async Task<Item?> GetItemByldAsync(int ItemId)
     {
-        throw new NotImplementedException();
+        List<Item> items = await _dataSource.LoadAllItemsAsync();
+        
+        return items.FirstOrDefault(savedItem => savedItem.Id == ItemId);
     }
 
     public async Task<bool> AddItemAsync(Item item)
     {
         
+        
+        /*
         if (item is null || item.Count <= 0)
             return false;
 
-        var items = await _dataSource.LoadAllItemsAsync();
+        List<Item> items = await _dataSource.LoadAllItemsAsync();
+        
+        if (Item
         //FirstOrDefault() : 
         //조건에 맞는 첫 번째 요소를 반환하고 조건에 맞는 요소가 없으면 기본값(Default)을 반환 (메모용 주석)
         var existingItem = items.FirstOrDefault(
@@ -56,6 +62,7 @@ public class InventoryRepository : IInventoryRepository
         if (existingItem is null)
         {
             // 새 아이템이므로 슬롯과 수량을 모두 검사한다.
+            
             if (items.Count >= _maxSlot)
                 return false;
 
@@ -75,6 +82,6 @@ public class InventoryRepository : IInventoryRepository
 
         await _dataSource.SaveAllItemsAsync(items);
         return true;
-
+        */
     }
 }
