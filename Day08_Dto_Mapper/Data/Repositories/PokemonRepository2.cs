@@ -16,7 +16,7 @@ public class PokemonRepository2(IPokemonApiDataSource2 dataSource2): IPokemonRep
           }
 
           PokemonDto? pokemonDto = JsonSerializer.Deserialize<PokemonDto>(response2.Body);
-          return pokemonDto?.ToModel(); //http에 널문 추가
+          return pokemonDto?.ToModel(); 
       } catch (Exception){
           throw new PokemonException();
       }

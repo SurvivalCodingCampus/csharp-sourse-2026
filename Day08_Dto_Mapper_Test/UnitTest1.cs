@@ -21,13 +21,13 @@ public class PokemonApiDataSourceTests {
 
     [Test]
     public async Task GetPokemonAsync_unknown조회시_404응답반환() {
-        // Arrange (준비)
+        // Given = Arrange (준비)
         var dataSource = new MockPokemonApiDataSource2();
 
-        // Act (실행)
+        // when = Act (실행)
         var response = await dataSource.GetPokemonAsync("unknown");
 
-        // Assert (검증)
+        // Then = Assert (검증)
         Assert.That(response, Is.Not.Null);
         Assert.That(response.StatusCode, Is.EqualTo(404));
         Assert.That(response.Body, Is.EqualTo("Not found"));
