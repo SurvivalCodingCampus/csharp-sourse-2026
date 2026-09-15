@@ -1,0 +1,36 @@
+### posts 얻기
+GET https://jsonplaceholder.typicode.com/posts
+
+### posts 1개 얻기
+GET https://jsonplaceholder.typicode.com/posts/1
+
+### Posts 에 1개 작성
+POST https://jsonplaceholder.typicode.com/posts/
+Content-Type: application/json
+
+{
+    "userId": 10,
+    "title": "test",
+    "body": "test"
+}
+
+### 일부 수정
+PATCH https://jsonplaceholder.typicode.com/posts/1
+Content-Type: application/json
+
+{
+  "title": "test!!!!" 
+}
+
+### 전체수정
+PUT https://jsonplaceholder.typicode.com/posts/1
+Content-Type: application/json
+
+{
+  "userId": 200,
+  "title": "test!!!",
+  "body": "test!!!!!!"
+}
+
+### 삭제
+DELETE https://jsonplaceholder.typicode.com/posts/1

@@ -1,0 +1,2 @@
+### 포켓몬 정보 가져오기
+GET https://pokeapi.co/api/v2/pokemon/ditto
