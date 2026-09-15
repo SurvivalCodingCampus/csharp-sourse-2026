@@ -1,5 +1,7 @@
 using System.Text.Json;
 using Day07_http.Data.DataSources;
+using Day07_http.Data.DTOs;
+using Day07_http.Data.Mapper;
 using Day07_http.Data.Models;
 using Day07_http.Data.Repositories;
 
@@ -18,8 +20,8 @@ public class PokemonRepository(IPokemonApiDataSource dataSource): IPokemonReposi
                 return null;
             }
 
-            Pokemon? pokemon = JsonSerializer.Deserialize<Pokemon>(response.Body);
-            return pokemon;
+            PokemonDto? pokemonDto = JsonSerializer.Deserialize<PokemonDto>(response.Body);
+            return pokemonDto?.ToModel();
         } catch (Exception)
         {
             throw new PokemonException();
