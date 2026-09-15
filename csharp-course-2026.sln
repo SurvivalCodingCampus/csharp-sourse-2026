@@ -28,6 +28,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Day07_Pokemon", "Day07_Poke
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Day07_Pokemon.Tests", "Day07_Pokemon.Tests\Day07_Pokemon.Tests.csproj", "{AF2A3B8B-3707-4822-B88B-860D2DF2EB4D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Day08_DTO_Mapper", "Day08_DTO_Mapper\Day08_DTO_Mapper.csproj", "{5B36ADFF-6F69-4DCA-98AE-D281D2C58E68}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Day08_DTO_Mapper.Tests", "Day08_DTO_Mapper.Tests\Day08_DTO_Mapper.Tests.csproj", "{D55281E6-F0F4-4DB5-9927-460F5B5DC5E7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -90,5 +94,13 @@ Global
 		{AF2A3B8B-3707-4822-B88B-860D2DF2EB4D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AF2A3B8B-3707-4822-B88B-860D2DF2EB4D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AF2A3B8B-3707-4822-B88B-860D2DF2EB4D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5B36ADFF-6F69-4DCA-98AE-D281D2C58E68}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5B36ADFF-6F69-4DCA-98AE-D281D2C58E68}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5B36ADFF-6F69-4DCA-98AE-D281D2C58E68}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5B36ADFF-6F69-4DCA-98AE-D281D2C58E68}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D55281E6-F0F4-4DB5-9927-460F5B5DC5E7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D55281E6-F0F4-4DB5-9927-460F5B5DC5E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D55281E6-F0F4-4DB5-9927-460F5B5DC5E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D55281E6-F0F4-4DB5-9927-460F5B5DC5E7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
