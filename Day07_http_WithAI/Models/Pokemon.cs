@@ -2,11 +2,14 @@
 
 using Newtonsoft.Json;
 
-public class Pokemon
-{
-    [JsonProperty("name")]
-    public string? Name { get; set; }
+//과제2
 
-    [JsonProperty("sprites")]
-    public PokemonSprites? Sprites { get; set; }
-}
+// public class Pokemon
+// {
+//     [JsonProperty("name")]
+//     public string? Name { get; set; }
+//
+//     [JsonProperty("sprites")]
+//     public PokemonSprites? Sprites { get; set; }
+// }
+public record Pokemon(string Name, string ImageUrl);
