@@ -11,17 +11,28 @@ public class Program
     {
         var repository = new PokemonRepository(new PokemonDataSource());
 
-        var pokemon = await repository.GetPokemonByNameAsync("glimmora");
+       
+        var result = await repository.GetPokemonByNameAsync("dittooo");
 
-        if (pokemon is null)
+        if (!result.IsSuccess)
         {
-            Console.WriteLine("포켓몬 정보를 찾을 수 없습니다.");
-            return;
+            Console.WriteLine($"에러 발생: {result.Error}");
         }
-    
-        Console.WriteLine($"이름: {pokemon.Name}");
-        Console.WriteLine($"높이: {pokemon.Height}");
-        Console.WriteLine($"무게: {pokemon.Weight}");
-        Console.WriteLine($"타입: {string.Join(", ", pokemon.Types?.Select(t => t.Type?.Name) ?? [])}");
+        else
+        {
+           
+            var pokemon = result.Value!;
+
+            Console.WriteLine($"이름: {pokemon.Name}");
+            Console.WriteLine($"높이: {pokemon.Height}");
+            Console.WriteLine($"무게: {pokemon.Weight}");
+            Console.WriteLine($"타입: {string.Join(", ", pokemon.Types?.Select(t => t.Type?.Name) ?? [])}");
+        }
+
+        Console.WriteLine();
+
+        var subway = new Subway();
+        await subway.PrintArrivalsAsync("서울");
+        await subway.PrintArrivalsAsync("존재하지않는역");
     }
 }

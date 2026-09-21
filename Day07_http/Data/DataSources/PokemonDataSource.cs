@@ -1,4 +1,5 @@
 using Day07_http.Data.Interfaces;
+using Day07_http.Data.Mappers;
 
 namespace Day07_http.Data.DataSources;
 
@@ -17,12 +18,7 @@ public class PokemonDataSource : IPokemonApiDataSource
     public async Task<Response> GetPokemonAsync(string pokemonName)
     {
         var httpResponse = await _httpClient.GetAsync($"pokemon/{pokemonName.ToLowerInvariant()}");
-        var body = await httpResponse.Content.ReadAsStringAsync();
 
-        return new Response
-        {
-            StatusCode = (int)httpResponse.StatusCode,
-            Body = body
-        };
+        return await httpResponse.ToResponseAsync();
     }
 }
