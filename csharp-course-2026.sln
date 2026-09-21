@@ -30,6 +30,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Day08_DTO_Mapper", "Day08_D
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Day08_DTO_Mapper_Test", "Day08_DTO_Mapper_Test\Day08_DTO_Mapper_Test.csproj", "{FE88E7F7-DBFA-4B00-B9B0-0FBF2CBE0824}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Day09_Result", "Day09_Result\Day09_Result.csproj", "{A2E0DC01-3B03-4028-A56F-9937A36AF609}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Day09_Result_Test", "Day09_Result_Test\Day09_Result_Test.csproj", "{1DE00569-4C3E-41E0-A18C-34903851858B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -96,5 +100,13 @@ Global
 		{FE88E7F7-DBFA-4B00-B9B0-0FBF2CBE0824}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FE88E7F7-DBFA-4B00-B9B0-0FBF2CBE0824}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FE88E7F7-DBFA-4B00-B9B0-0FBF2CBE0824}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A2E0DC01-3B03-4028-A56F-9937A36AF609}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A2E0DC01-3B03-4028-A56F-9937A36AF609}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A2E0DC01-3B03-4028-A56F-9937A36AF609}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A2E0DC01-3B03-4028-A56F-9937A36AF609}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1DE00569-4C3E-41E0-A18C-34903851858B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1DE00569-4C3E-41E0-A18C-34903851858B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1DE00569-4C3E-41E0-A18C-34903851858B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1DE00569-4C3E-41E0-A18C-34903851858B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
