@@ -8,7 +8,7 @@ namespace Day08_DTO_Mapper;
 
 public class DataSource(HttpClient httpClient) : IPokemonApiDataSource
 {
-    //Data Get 데이터 불러오기
+    //Data Get 데이터 접근
     private const string BaseUrl = "https://pokeapi.co/api/v2/";
     private readonly HttpClient _httpClient = httpClient;
     
