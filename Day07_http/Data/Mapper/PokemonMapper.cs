@@ -8,7 +8,7 @@ public static class PokemonMapper
     public static Pokemon ToModel(this PokemonDto dto)
     {
         return new Pokemon(
-            Name: dto.Name!, 
-            ImageUrl: dto.Sprites!.FrontDefault!);
+            Name: dto.Name ?? "", 
+            ImageUrl: dto.Sprites?.FrontDefault ?? "");
     }
 }

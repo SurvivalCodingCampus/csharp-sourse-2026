@@ -1,4 +1,6 @@
 using System.Text.Json;
+using Day07_http.Data.Common;
+using Day07_http.Data.Common.Errors;
 using Day07_http.Data.DataSources;
 using Day07_http.Data.DTOs;
 using Day07_http.Data.Mapper;
@@ -9,22 +11,30 @@ namespace Day07_http.Data.Interfaces;
 
 public class PokemonRepository(IPokemonApiDataSource dataSource): IPokemonRepository
 {
-    public async Task<Pokemon?> GetPokemonByNameAsync(string pokemonName)
+    public async Task<Result<Pokemon, PokemonError>> GetPokemonByNameAsync(string pokemonName)
     {
         try
         {
             Response response = await dataSource.GetPokemonAsync(pokemonName);
 
-            if (response.StatusCode != 200)
+            switch (response.StatusCode)
             {
-                return null;
+                case 200:
+                    PokemonDto? pokemonDto = JsonSerializer.Deserialize<PokemonDto>(response.Body);
+                    Pokemon? pokemon = pokemonDto?.ToModel();
+                    return new Result<Pokemon, PokemonError>.Success(pokemon!);
+                case 404:
+                    return new Result<Pokemon, PokemonError>.Failure(PokemonError.NotFound);
+                case -1:
+                    return new Result<Pokemon, PokemonError>.Failure(PokemonError.NetworkTimeout);
+                default:
+                    return new Result<Pokemon, PokemonError>.Failure(PokemonError.Unknown);
             }
 
-            PokemonDto? pokemonDto = JsonSerializer.Deserialize<PokemonDto>(response.Body);
-            return pokemonDto?.ToModel();
+            
         } catch (Exception)
         {
-            throw new PokemonException();
+            return new Result<Pokemon, PokemonError>.Failure(PokemonError.Unknown);
         }
     }
 }
