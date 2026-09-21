@@ -5,5 +5,6 @@ public enum PokemonError
     NetworkTimeOut,
     NotFound,
     Unknown,
+    RequestTiemOutOfRange,
     AuthenticationFailed
 }

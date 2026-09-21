@@ -1,0 +1,5 @@
+### 샘플키는 서울역만 조회 가능
+GET http://swopenapi.seoul.go.kr/api/subway/sample/json/realtimeStationArrival/0/5/서울
+
+### 인증키는 환경 변수로 설정
+GET http://swopenapi.seoul.go.kr/api/subway/{{$processEnv SEOUL_SUBWAY_API_KEY}}/json/realtimeStationArrival/0/100/강남

@@ -32,8 +32,7 @@ class Program
                     case PokemonError.AuthenticationFailed:
                         Console.WriteLine("오류: AuthenticationFailed.");
                         break;
-                    Default:
-                        break;
+                    
                 }
 
             break;

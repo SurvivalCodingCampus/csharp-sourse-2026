@@ -45,6 +45,8 @@ public class Repository(IPokemonApiDataSource dataSource) : IPokemonRepository
                     return new Result<Pokemon, PokemonError>.Error(PokemonError.NotFound);
                 case -1:
                     return new Result<Pokemon, PokemonError>.Error(PokemonError.NetworkTimeOut);
+                case 408:
+                    return new Result<Pokemon, PokemonError>.Error(PokemonError.RequestTiemOutOfRange);
                 default:
                     return new Result<Pokemon, PokemonError>.Error(PokemonError.Unknown);
             }
@@ -54,31 +56,4 @@ public class Repository(IPokemonApiDataSource dataSource) : IPokemonRepository
             return new Result<Pokemon, PokemonError>.Error(PokemonError.Unknown);
         }
     }
-    /*
-    private static Pokemon? MapResponse(Response<PokemonDTO> response)
-    {
-        if (response.StatusCode == 404)
-            return null;
-
-        if (response.StatusCode != 200)
-            throw new HttpRequestException(
-                $"Pokemon request failed. Status code {response.StatusCode}",
-                null, (HttpStatusCode)response.StatusCode);
-
-        if (response.Body is null)
-            throw new InvalidOperationException("Successful Pokemon response has no body.");
-
-        return response.Body.ToModel();
-    }
-
-    public async Task<Result<Pokemon, PokemonError>> GetPokemonByTypeAsync(string pokemonName, string typeName)
-    {
-        var pokemon = await GetPokemonByNameAsync(pokemonName);
-        if (pokemon is null) return null;
-
-        bool hasType = pokemon.Types.Any(
-            t => string.Equals(t, typeName, StringComparison.OrdinalIgnoreCase));
-        return hasType ? pokemon : null;
-    }
-    */
 }
