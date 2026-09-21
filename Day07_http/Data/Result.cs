@@ -2,7 +2,7 @@ namespace Day07_http.Data;
 
 public enum ErrorType
 {
-    None = 0,     
+    None = 0,      
     NotFound,      
     Timeout,       
     ParsingError,  

@@ -76,7 +76,6 @@ public class PokemonRepositoryTests
         var dataSource = new TimeoutMockDataSource();
         var repository = new PokemonRepository(dataSource);
 
-        
         var result = await repository.GetPokemonByNameAsync("dittooo");
 
         Assert.That(result.IsSuccess, Is.False);
@@ -85,7 +84,6 @@ public class PokemonRepositoryTests
         TestContext.WriteLine($"에러 메시지: {result.Error}");
     }
 
-    
     [Test]
     public async Task GetPokemonByNameAsync_JsonErrorDataSource_ReturnsFailureResultWithParsingError()
     {

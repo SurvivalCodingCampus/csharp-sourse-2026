@@ -20,7 +20,6 @@ public class PokemonRepository : IPokemonRepository
     {
         Response response;
 
-        
         try
         {
             response = await _dataSource.GetPokemonAsync(pokemonName);

@@ -11,7 +11,6 @@ public class Program
     {
         var repository = new PokemonRepository(new PokemonDataSource());
 
-       
         var result = await repository.GetPokemonByNameAsync("dittooo");
 
         if (!result.IsSuccess)
@@ -20,7 +19,6 @@ public class Program
         }
         else
         {
-           
             var pokemon = result.Value!;
 
             Console.WriteLine($"이름: {pokemon.Name}");
