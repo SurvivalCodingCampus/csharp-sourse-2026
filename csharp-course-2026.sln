@@ -26,6 +26,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Day07_HTTP", "Day07_HTTP\Da
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Day07_HTTP_Test", "Day07_HTTP_Test\Day07_HTTP_Test.csproj", "{E6C70FCA-B33C-4324-BE72-D15D1C191FE4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Day08_DTO_Mapper", "Day08_DTO_Mapper\Day08_DTO_Mapper.csproj", "{7D392B8F-5544-49DF-8C7F-0ABBA314E070}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Day08_DTO_Mapper_Test", "Day08_DTO_Mapper_Test\Day08_DTO_Mapper_Test.csproj", "{FE88E7F7-DBFA-4B00-B9B0-0FBF2CBE0824}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -84,5 +88,13 @@ Global
 		{E6C70FCA-B33C-4324-BE72-D15D1C191FE4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E6C70FCA-B33C-4324-BE72-D15D1C191FE4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E6C70FCA-B33C-4324-BE72-D15D1C191FE4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7D392B8F-5544-49DF-8C7F-0ABBA314E070}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7D392B8F-5544-49DF-8C7F-0ABBA314E070}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7D392B8F-5544-49DF-8C7F-0ABBA314E070}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7D392B8F-5544-49DF-8C7F-0ABBA314E070}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FE88E7F7-DBFA-4B00-B9B0-0FBF2CBE0824}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FE88E7F7-DBFA-4B00-B9B0-0FBF2CBE0824}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FE88E7F7-DBFA-4B00-B9B0-0FBF2CBE0824}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FE88E7F7-DBFA-4B00-B9B0-0FBF2CBE0824}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
