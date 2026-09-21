@@ -22,7 +22,11 @@ public class PokemonRepository(IPokemonApiDataSource source) : IPokemonRepositor
                 case 404:
                     return new Result<Pokemon, PokemonError>.Failure(PokemonError.NotFound);
                 case 200:
-                    PokemonDto pokemonDto = JsonSerializer.Deserialize<PokemonDto>(response.Body)!;
+                    PokemonDto? pokemonDto = JsonSerializer.Deserialize<PokemonDto>(response.Body);
+                    if (pokemonDto == null)
+                    {
+                        return new Result<Pokemon, PokemonError>.Failure(PokemonError.SerializationFailed);
+                    }
                     return new Result<Pokemon, PokemonError>.Success(pokemonDto.ToModel());
                 case -1:
                     return new Result<Pokemon, PokemonError>.Failure(PokemonError.NetworkTimeout);

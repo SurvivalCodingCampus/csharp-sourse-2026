@@ -24,7 +24,11 @@ public class SubwayArrivalRepository(ISubwayDataSource source) : ISubwayArrivalR
                 return new Result<SubwayArrival, SubwayArrivalError>.Failure(SubwayArrivalError.Unknown);
             }
 
-            SubwayArrivalResponseDto subDto = JsonSerializer.Deserialize<SubwayArrivalResponseDto>(response.Body)!;
+            SubwayArrivalResponseDto? subDto = JsonSerializer.Deserialize<SubwayArrivalResponseDto>(response.Body);
+            if (subDto is null)
+            {
+                return new Result<SubwayArrival, SubwayArrivalError>.Failure(SubwayArrivalError.SerializationFailed);
+            }
             switch (subDto.ErrorMessage?.Code ?? subDto.Code ?? "Unknown")
             {
                 case "INFO-000":
@@ -43,26 +47,9 @@ public class SubwayArrivalRepository(ISubwayDataSource source) : ISubwayArrivalR
                 default:
                     return new Result<SubwayArrival, SubwayArrivalError>.Failure(SubwayArrivalError.Unknown);
             }
-
-            // switch (response.StatusCode)
-            // {
-            //     case 404:
-            //         return new Result<SubwayArrival, SubwayArrivalError>.Failure(SubwayArrivalError.NotFound);
-            //     case 200:
-            //         SubwayArrivalResponseDto subDto =
-            //             JsonSerializer.Deserialize<SubwayArrivalResponseDto>(response.Body)!;
-            //         return new Result<SubwayArrival, SubwayArrivalError>.Success(subDto.ToSubwayArrival());
-            //     case 500:
-            //         return new Result<SubwayArrival, SubwayArrivalError>.Failure(SubwayArrivalError.RequestRangeExceeded);
-            //     case -1:
-            //         return new Result<SubwayArrival, SubwayArrivalError>.Failure(SubwayArrivalError.NetworkTimeout);
-            //     default:
-            //         return new Result<SubwayArrival, SubwayArrivalError>.Failure(SubwayArrivalError.Unknown);
-            // }
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
             switch (e)
             {
                 case JsonException:
