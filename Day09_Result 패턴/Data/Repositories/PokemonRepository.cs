@@ -41,10 +41,23 @@ public class PokemonRepository(IPokemonApiDataSource dataSource) : IPokemonRepos
             }
             
         }
+        catch (TimeoutException)
+        {
+            return new Result<Pokemon, PokemonError>.Failure(
+                PokemonError.NetworkTimeout
+            );
+        }
+        catch (Newtonsoft.Json.JsonSerializationException)
+        {
+            return new Result<Pokemon, PokemonError>.Failure(
+                PokemonError.Unknown
+            );
+        }
         catch (Exception)
         {
-            return new Result<Pokemon, PokemonError>.Failure(PokemonError.Unknown);
-
+            return new Result<Pokemon, PokemonError>.Failure(
+                PokemonError.Unknown
+            );
         }
     }
 }
