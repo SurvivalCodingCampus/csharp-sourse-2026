@@ -482,3 +482,5 @@ $RECYCLE.BIN/
 *.swp
 
 Day01_Java_to_CSharp.*
+# 작업 원본 백업
+/Backups/
