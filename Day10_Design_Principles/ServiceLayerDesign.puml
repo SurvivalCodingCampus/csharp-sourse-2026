@@ -1,0 +1,231 @@
+﻿@startuml GameDomainModel_WithServiceAndResult
+
+' ===== Enums =====
+enum TileType {
+  RED
+  BLUE
+  GREEN
+  YELLOW
+  PURPLE
+  SPECIAL
+}
+
+enum SessionStatus {
+  IN_PROGRESS
+  WON
+  LOST
+}
+
+enum RewardType {
+  COINS
+  GEMS
+  GOLDEN_KEY
+}
+
+enum ServiceError {
+  INSUFFICIENT_CURRENCY
+  LEVEL_LOCKED
+  LEVEL_NOT_FOUND
+  TASK_ALREADY_COMPLETED
+  TASK_NOT_FOUND
+  TASK_NOT_COMPLETABLE
+  SESSION_NOT_FOUND
+  SESSION_ALREADY_ENDED
+  INVALID_MOVE
+  PLAYER_NOT_FOUND
+}
+
+' ===== Result Wrapper =====
+class "Result<T, E>" as Result {
+  +isSuccess: bool
+  +value: T
+  +error: E
+  --
+  +{static} Ok(value: T): Result<T, E>
+  +{static} Fail(error: E): Result<T, E>
+}
+
+' ===== Domain Entities (순수 데이터) =====
+class Player {
+  +playerId: string
+  +nickname: string
+  +countryFlag: string
+  +profileImageUrl: string
+  +coins: int
+  +gems: int
+  +goldenKeys: int
+}
+
+class PlayerSettings {
+  +playerId: string
+  +soundEnabled: bool
+  +musicEnabled: bool
+}
+
+class Level {
+  +levelId: string
+  +levelNumber: int
+  +targetScore: int
+  +moveLimit: int
+  +difficulty: int
+}
+
+class LevelProgress {
+  +playerId: string
+  +levelId: string
+  +stars: int
+  +bestScore: int
+  +isUnlocked: bool
+  +isCompleted: bool
+}
+
+class Task {
+  +taskId: string
+  +title: string
+  +description: string
+  +currentProgress: int
+  +targetProgress: int
+  +rewardType: RewardType
+  +rewardAmount: int
+  +isCompleted: bool
+}
+
+class Tile {
+  +row: int
+  +col: int
+  +type: TileType
+}
+
+class GameSession {
+  +sessionId: string
+  +level: Level
+  +currentScore: int
+  +movesRemaining: int
+  +status: SessionStatus
+  +board: Tile[][]
+}
+
+' ===== Relationships =====
+Player "1" -- "1" PlayerSettings
+Player "1" -- "*" LevelProgress
+Level "1" -- "*" LevelProgress
+Player "1" -- "*" Task
+GameSession "1" o-- "1" Level
+GameSession "1" *-- "*" Tile
+
+' ===== Repository Interfaces (Task<T> — 순수 영속성/비동기 I/O) =====
+interface IPlayerRepository {
+  +getPlayer(playerId: string): Task<Player>
+  +savePlayer(player: Player): Task
+}
+
+interface IPlayerSettingsRepository {
+  +getSettings(playerId: string): Task<PlayerSettings>
+  +saveSettings(settings: PlayerSettings): Task
+}
+
+interface ILevelRepository {
+  +getLevel(levelId: string): Task<Level>
+  +getAllLevels(): Task<Level[]>
+}
+
+interface ILevelProgressRepository {
+  +getProgress(playerId: string, levelId: string): Task<LevelProgress>
+  +getAllProgress(playerId: string): Task<LevelProgress[]>
+  +saveProgress(progress: LevelProgress): Task
+}
+
+interface ITaskRepository {
+  +getActiveTasks(playerId: string): Task<Task[]>
+  +getTask(taskId: string): Task<Task>
+  +saveTask(task: Task): Task
+}
+
+interface IGameSessionRepository {
+  +getActiveSession(playerId: string): Task<GameSession>
+  +saveSession(session: GameSession): Task
+  +deleteSession(sessionId: string): Task
+}
+
+' ===== Service Layer (Task<Result<T, ServiceError>> — 판정/가공 책임) =====
+class PlayerService {
+  -playerRepo: IPlayerRepository
+  -settingsRepo: IPlayerSettingsRepository
+  --
+  +getProfile(playerId: string): Task<Result<Player, ServiceError>>
+  +changeNickname(playerId: string, name: string): Task<Result<Player, ServiceError>>
+  +changeCountryFlag(playerId: string, flag: string): Task<Result<Player, ServiceError>>
+  +grantCurrency(playerId: string, coins: int, gems: int, keys: int): Task<Result<Player, ServiceError>>
+  +spendCurrency(playerId: string, coins: int, gems: int): Task<Result<Player, ServiceError>>
+  +toggleSound(playerId: string): Task<Result<PlayerSettings, ServiceError>>
+  +toggleMusic(playerId: string): Task<Result<PlayerSettings, ServiceError>>
+}
+
+class LevelService {
+  -levelRepo: ILevelRepository
+  -progressRepo: ILevelProgressRepository
+  --
+  +getLevelList(playerId: string): Task<Result<LevelProgress[], ServiceError>>
+  +isLevelUnlocked(playerId: string, levelId: string): Task<Result<bool, ServiceError>>
+  +calculateStars(level: Level, score: int): int
+  +submitResult(playerId: string, levelId: string, score: int): Task<Result<LevelProgress, ServiceError>>
+  +unlockNextLevel(playerId: string, currentLevelId: string): Task<Result<LevelProgress, ServiceError>>
+}
+
+class TaskService {
+  -taskRepo: ITaskRepository
+  -playerService: PlayerService
+  --
+  +getActiveTasks(playerId: string): Task<Result<Task[], ServiceError>>
+  +addProgress(taskId: string, amount: int): Task<Result<Task, ServiceError>>
+  +isTaskCompletable(task: Task): bool
+  +claimReward(playerId: string, taskId: string): Task<Result<Task, ServiceError>>
+}
+
+class MatchEvaluator {
+  --
+  +findMatches(board: Tile[][]): Tile[]
+  +calculateScore(matches: Tile[]): int
+  +applyGravity(board: Tile[][]): void
+  +refillBoard(board: Tile[][]): void
+}
+
+class GameSessionService {
+  -sessionRepo: IGameSessionRepository
+  -levelService: LevelService
+  -matchEvaluator: MatchEvaluator
+  --
+  +startSession(playerId: string, levelId: string): Task<Result<GameSession, ServiceError>>
+  +swapTiles(sessionId: string, a: Tile, b: Tile): Task<Result<GameSession, ServiceError>>
+  +evaluateSessionEnd(session: GameSession): SessionStatus
+  +finishSession(sessionId: string): Task<Result<GameSession, ServiceError>>
+}
+
+' ===== Service -> Repository 의존 =====
+PlayerService ..> IPlayerRepository
+PlayerService ..> IPlayerSettingsRepository
+LevelService ..> ILevelRepository
+LevelService ..> ILevelProgressRepository
+TaskService ..> ITaskRepository
+TaskService ..> PlayerService
+GameSessionService ..> IGameSessionRepository
+GameSessionService ..> LevelService
+GameSessionService ..> MatchEvaluator
+GameSessionService ..> PlayerService
+
+' ===== Service -> Result 의존 =====
+PlayerService ..> Result
+LevelService ..> Result
+TaskService ..> Result
+GameSessionService ..> Result
+Result ..> ServiceError
+
+' ===== Repository -> Entity 의존 =====
+IPlayerRepository ..> Player
+IPlayerSettingsRepository ..> PlayerSettings
+ILevelRepository ..> Level
+ILevelProgressRepository ..> LevelProgress
+ITaskRepository ..> Task
+IGameSessionRepository ..> GameSession
+
+@enduml
