@@ -1,0 +1,207 @@
+@startuml
+scale .75
+skinparam classAttributeIconSize 0
+
+' record의 위치 매개변수와 자동 생성 속성을 UML 생성자와 get/init 속성으로 표현한다.
+
+
+' =========================
+' 데이터 모델
+' =========================
+
+package "Data.Models" {
+
+    class PlayerProfile <<record>> {
+        {field} +string PlayerId { get; init; }
+        {field} +string Nickname { get; init; }
+        {field} +string AvatarId { get; init; }
+        +PlayerProfile(string PlayerId, string Nickname, string AvatarId)
+    }
+
+    class Wallet <<record>> {
+        {field} +int Coins { get; init; }
+        {field} +int GoldenKeys { get; init; }
+        +Wallet(int Coins, int GoldenKeys)
+    }
+
+    class GameSettings <<record>> {
+        {field} +bool BgmEnabled { get; init; }
+        {field} +bool SfxEnabled { get; init; }
+        {field} +string Language { get; init; }
+        +GameSettings(bool BgmEnabled, bool SfxEnabled, string Language)
+    }
+
+    class Level <<record>> {
+        {field} +int Id { get; init; }
+        {field} +string Name { get; init; }
+        {field} +int MoveLimit { get; init; }
+        +Level(int Id, string Name, int MoveLimit)
+    }
+
+    class LevelGoal <<record>> {
+        {field} +GoalType Type { get; init; }
+        {field} +int TargetCount { get; init; }
+        +LevelGoal(GoalType Type, int TargetCount)
+    }
+
+    enum GoalType {
+        Score
+        Collect
+        Remove
+    }
+
+    class LevelProgress <<record>> {
+        {field} +int LevelId { get; init; }
+        {field} +bool IsUnlocked { get; init; }
+        {field} +bool IsCleared { get; init; }
+        {field} +int Stars { get; init; }
+        {field} +int BestScore { get; init; }
+        +LevelProgress(int LevelId, bool IsUnlocked, bool IsCleared, int Stars, int BestScore)
+    }
+
+    class Mission <<record>> {
+        {field} +int Id { get; init; }
+        {field} +string Title { get; init; }
+        {field} +int CurrentProgress { get; init; }
+        {field} +int TargetProgress { get; init; }
+        {field} +MissionStatus Status { get; init; }
+        +Mission(int Id, string Title, int CurrentProgress, int TargetProgress, MissionStatus Status)
+    }
+
+    enum MissionStatus {
+        InProgress
+        Completed
+        RewardClaimed
+    }
+
+    class Reward <<record>> {
+        {field} +int Coins { get; init; }
+        {field} +int GoldenKeys { get; init; }
+        +Reward(int Coins, int GoldenKeys)
+    }
+
+    class GameSession <<record>> {
+        {field} +int LevelId { get; init; }
+        {field} +int Score { get; init; }
+        {field} +int RemainingMoves { get; init; }
+        {field} +GameState State { get; init; }
+        +GameSession(int LevelId, int Score, int RemainingMoves, GameState State)
+    }
+
+    enum GameState {
+        Ready
+        Playing
+        Win
+        Lose
+    }
+
+    class Board <<record>> {
+        {field} +int Width { get; init; }
+        {field} +int Height { get; init; }
+        +Board(int Width, int Height)
+    }
+
+    class Tile <<record>> {
+        {field} +int Row { get; init; }
+        {field} +int Column { get; init; }
+        {field} +TileType Type { get; init; }
+        +Tile(int Row, int Column, TileType Type)
+    }
+
+    enum TileType {
+        Red
+        Blue
+        Green
+        Yellow
+        Purple
+        Special
+    }
+}
+
+
+' =========================
+' Repository 인터페이스
+' =========================
+
+package "Data.Interfaces" {
+
+    interface IProfileRepository {
+        +Task<PlayerProfile> GetProfileAsync()
+        +Task SaveProfileAsync(PlayerProfile profile)
+    }
+
+    interface IWalletRepository {
+        +Task<Wallet> GetWalletAsync()
+        +Task SaveWalletAsync(Wallet wallet)
+    }
+
+    interface ISettingsRepository {
+        +Task<GameSettings> GetSettingsAsync()
+        +Task SaveSettingsAsync(GameSettings settings)
+    }
+
+    interface ILevelRepository {
+        +Task<List<Level>> GetLevelsAsync()
+        +Task<Level> GetLevelAsync(int levelId)
+    }
+
+    interface IProgressRepository {
+        +Task<List<LevelProgress>> GetProgressListAsync()
+        +Task<LevelProgress> GetProgressAsync(int levelId)
+        +Task SaveProgressAsync(LevelProgress progress)
+    }
+
+    interface IMissionRepository {
+        +Task<List<Mission>> GetMissionsAsync()
+        +Task SaveMissionAsync(Mission mission)
+    }
+
+    interface IGameSessionRepository {
+        +Task<GameSession> GetSessionAsync()
+        +Task SaveSessionAsync(GameSession session)
+        +Task DeleteSessionAsync()
+    }
+}
+
+
+' =========================
+' 모델 관계
+' =========================
+
+PlayerProfile "1" -- "1" Wallet
+
+Level "1" *-- "1..*" LevelGoal
+Level "1" -- "0..1" LevelProgress
+
+Mission "1" --> "1" Reward
+
+GameSession "1" --> "1" Level
+GameSession "1" *-- "1" Board
+
+Board "1" *-- "0..*" Tile
+
+LevelGoal --> GoalType
+Mission --> MissionStatus
+GameSession --> GameState
+Tile --> TileType
+
+
+' =========================
+' Repository 인터페이스가 사용하는 모델
+' =========================
+
+IProfileRepository ..> PlayerProfile
+
+IWalletRepository ..> Wallet
+
+ISettingsRepository ..> GameSettings
+
+ILevelRepository ..> Level
+
+IProgressRepository ..> LevelProgress
+
+IMissionRepository ..> Mission
+
+IGameSessionRepository ..> GameSession
+
+@enduml

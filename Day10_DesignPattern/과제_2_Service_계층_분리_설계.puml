@@ -1,0 +1,288 @@
+@startuml
+scale .75
+skinparam classAttributeIconSize 0
+
+' record의 위치 매개변수와 자동 생성 속성을 UML 생성자와 get/init 속성으로 표현한다.
+' Service 생성자는 C# 기본 생성자(primary constructor) 주입을 나타낸다.
+' 과제 2는 Service 계층 중심의 요약도로, 과제 1의 보드/타일/목표 모델은 생략한다.
+
+
+
+' ==================================================
+' 데이터 모델
+' ==================================================
+
+package "Data.Models" {
+
+    class PlayerProfile <<record>> {
+        {field} +string PlayerId { get; init; }
+        {field} +string Nickname { get; init; }
+        {field} +string AvatarId { get; init; }
+        +PlayerProfile(string PlayerId, string Nickname, string AvatarId)
+    }
+
+    class Wallet <<record>> {
+        {field} +int Coins { get; init; }
+        {field} +int GoldenKeys { get; init; }
+        +Wallet(int Coins, int GoldenKeys)
+    }
+
+    class GameSettings <<record>> {
+        {field} +bool BgmEnabled { get; init; }
+        {field} +bool SfxEnabled { get; init; }
+        {field} +string Language { get; init; }
+        +GameSettings(bool BgmEnabled, bool SfxEnabled, string Language)
+    }
+
+    class Level <<record>> {
+        {field} +int Id { get; init; }
+        {field} +string Name { get; init; }
+        {field} +int MoveLimit { get; init; }
+        +Level(int Id, string Name, int MoveLimit)
+    }
+
+    class LevelProgress <<record>> {
+        {field} +int LevelId { get; init; }
+        {field} +bool IsUnlocked { get; init; }
+        {field} +bool IsCleared { get; init; }
+        {field} +int Stars { get; init; }
+        {field} +int BestScore { get; init; }
+        +LevelProgress(int LevelId, bool IsUnlocked, bool IsCleared, int Stars, int BestScore)
+    }
+
+    class Mission <<record>> {
+        {field} +int Id { get; init; }
+        {field} +string Title { get; init; }
+        {field} +int CurrentProgress { get; init; }
+        {field} +int TargetProgress { get; init; }
+        {field} +MissionStatus Status { get; init; }
+        +Mission(int Id, string Title, int CurrentProgress, int TargetProgress, MissionStatus Status)
+    }
+
+    enum MissionStatus {
+        InProgress
+        Completed
+        RewardClaimed
+    }
+
+    class Reward <<record>> {
+        {field} +int Coins { get; init; }
+        {field} +int GoldenKeys { get; init; }
+        +Reward(int Coins, int GoldenKeys)
+    }
+
+    class GameSession <<record>> {
+        {field} +int LevelId { get; init; }
+        {field} +int Score { get; init; }
+        {field} +int RemainingMoves { get; init; }
+        {field} +GameState State { get; init; }
+        +GameSession(int LevelId, int Score, int RemainingMoves, GameState State)
+    }
+
+    enum GameState {
+        Ready
+        Playing
+        Win
+        Lose
+    }
+}
+
+
+' ==================================================
+' 성공 / 실패 결과
+' ==================================================
+
+package "Common" {
+
+    abstract class "Result<TData, TError>" as Result <<record>> {
+        -Result()
+    }
+
+    class "Result<TData, TError>.Success" as ResultSuccess <<sealed record>> {
+        {field} +TData Data { get; init; }
+        +Success(TData Data)
+    }
+
+    class "Result<TData, TError>.Failure" as ResultFailure <<sealed record>> {
+        {field} +TError Error { get; init; }
+        +Failure(TError Error)
+    }
+
+    Result <|-- ResultSuccess
+    Result <|-- ResultFailure
+}
+
+package "Common.Error" {
+
+    enum GameError {
+        NotFound
+        NetworkError
+        InvalidNickname
+        InvalidAmount
+        InsufficientCoins
+        LevelLocked
+        MissionNotCompleted
+        RewardAlreadyClaimed
+    }
+}
+
+
+' ==================================================
+' Repository 인터페이스
+' ==================================================
+
+package "Data.Interfaces" {
+
+    interface IProfileRepository {
+        +Task<PlayerProfile> GetProfileAsync()
+        +Task SaveProfileAsync(PlayerProfile profile)
+    }
+
+    interface IWalletRepository {
+        +Task<Wallet> GetWalletAsync()
+        +Task SaveWalletAsync(Wallet wallet)
+    }
+
+    interface ISettingsRepository {
+        +Task<GameSettings> GetSettingsAsync()
+        +Task SaveSettingsAsync(GameSettings settings)
+    }
+
+    interface ILevelRepository {
+        +Task<List<Level>> GetLevelsAsync()
+        +Task<Level> GetLevelAsync(int levelId)
+    }
+
+    interface IProgressRepository {
+        +Task<List<LevelProgress>> GetProgressListAsync()
+        +Task<LevelProgress> GetProgressAsync(int levelId)
+        +Task SaveProgressAsync(LevelProgress progress)
+    }
+
+    interface IMissionRepository {
+        +Task<List<Mission>> GetMissionsAsync()
+        +Task<Mission> GetMissionAsync(int missionId)
+        +Task SaveMissionAsync(Mission mission)
+    }
+
+    interface IGameSessionRepository {
+        +Task<GameSession> GetSessionAsync()
+        +Task SaveSessionAsync(GameSession session)
+        +Task DeleteSessionAsync()
+    }
+}
+
+
+' ==================================================
+' Service 계층
+' ==================================================
+
+package "Services" {
+
+    class ProfileService <<primary constructor>> {
+        +ProfileService(IProfileRepository profileRepository)
+
+        +Task<Result<PlayerProfile, GameError>> UpdateProfileAsync(string nickname, string avatarId)
+    }
+
+
+    class WalletService <<primary constructor>> {
+        +WalletService(IWalletRepository walletRepository)
+
+        +Task<Result<Wallet, GameError>> AddRewardAsync(Reward reward)
+
+        +Task<Result<Wallet, GameError>> SpendCoinsAsync(int amount)
+    }
+
+
+    class ProgressService <<primary constructor>> {
+        +ProgressService(ILevelRepository levelRepository, IProgressRepository progressRepository)
+
+        +Task<Result<LevelProgress, GameError>> CanEnterLevelAsync(int levelId)
+
+        +Task<Result<LevelProgress, GameError>> CompleteLevelAsync(int levelId, int score, int stars)
+    }
+
+
+    class MissionService <<primary constructor>> {
+        +MissionService(IMissionRepository missionRepository, IWalletRepository walletRepository)
+
+        +Task<Result<Reward, GameError>> ClaimRewardAsync(int missionId)
+    }
+
+
+    class GameSessionService <<primary constructor>> {
+        +GameSessionService(ILevelRepository levelRepository, IProgressRepository progressRepository, IGameSessionRepository sessionRepository)
+
+        +Task<Result<GameSession, GameError>> StartGameAsync(int levelId)
+
+        +Task<Result<GameSession, GameError>> SaveGameAsync(GameSession session)
+
+        +Task<Result<GameSession, GameError>> FinishGameAsync(GameSession session)
+    }
+}
+
+
+' ==================================================
+' 모델 관계
+' ==================================================
+
+Mission --> MissionStatus
+Mission --> Reward
+
+GameSession --> GameState
+
+Level "1" -- "0..1" LevelProgress
+
+
+' ==================================================
+' Service 계층 의존성
+' ==================================================
+
+ProfileService --> IProfileRepository
+
+WalletService --> IWalletRepository
+
+ProgressService --> ILevelRepository
+ProgressService --> IProgressRepository
+
+MissionService --> IMissionRepository
+MissionService --> IWalletRepository
+
+GameSessionService --> ILevelRepository
+GameSessionService --> IProgressRepository
+GameSessionService --> IGameSessionRepository
+
+
+' ==================================================
+' Repository 인터페이스가 사용하는 모델
+' ==================================================
+
+IProfileRepository ..> PlayerProfile
+IWalletRepository ..> Wallet
+ISettingsRepository ..> GameSettings
+
+ILevelRepository ..> Level
+IProgressRepository ..> LevelProgress
+
+IMissionRepository ..> Mission
+IGameSessionRepository ..> GameSession
+
+
+' ==================================================
+' Service 계층 반환 결과
+' ==================================================
+
+ProfileService ..> Result
+WalletService ..> Result
+ProgressService ..> Result
+MissionService ..> Result
+GameSessionService ..> Result
+
+ProfileService ..> GameError
+WalletService ..> GameError
+ProgressService ..> GameError
+MissionService ..> GameError
+GameSessionService ..> GameError
+
+@enduml
