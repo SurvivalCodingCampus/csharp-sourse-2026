@@ -1,5 +1,6 @@
 using System.Net;
 using Day07_http.Data;
+using Day07_http.Data.Mocks;
 using Day07_http.Repositories;
 
 namespace Day07_http;
@@ -32,11 +33,13 @@ public class PokemonRepositoryTests
         var dataSource = new FakePokemonApiDataSource(HttpStatusCode.OK, SampleJson);
         var repository = new PokemonRepository(dataSource);
 
-        var pokemon = await repository.GetPokemonByNameAsync("glimmora");
+        var result = await repository.GetPokemonByNameAsync("glimmora");
 
-        Assert.That(pokemon, Is.Not.Null);
+        Assert.That(result.IsSuccess, Is.True);
 
-        Assert.That(pokemon!.Name, Is.EqualTo("glimmora"));
+        var pokemon = result.Value!;
+
+        Assert.That(pokemon.Name, Is.EqualTo("glimmora"));
         TestContext.WriteLine($"이름: {pokemon.Name}");
 
         Assert.That(pokemon.Height, Is.EqualTo(15));
@@ -53,13 +56,45 @@ public class PokemonRepositoryTests
     }
 
     [Test]
-    public async Task GetPokemonByNameAsync_NotFoundResponse_ReturnsNull()
+    public async Task GetPokemonByNameAsync_NotFoundResponse_ReturnsFailureResult()
     {
         var dataSource = new FakePokemonApiDataSource(HttpStatusCode.NotFound, "");
         var repository = new PokemonRepository(dataSource);
 
-        var pokemon = await repository.GetPokemonByNameAsync("no-such-pokemon");
+        var result = await repository.GetPokemonByNameAsync("dittooo");
 
-        Assert.That(pokemon, Is.Null);
+        Assert.That(result.IsSuccess, Is.False);
+        Assert.That(result.ErrorType, Is.EqualTo(ErrorType.NotFound));
+        Assert.That(result.StatusCode, Is.EqualTo(404));
+        Assert.That(result.Error, Is.Not.Null.And.Contains("dittooo"));
+        TestContext.WriteLine($"에러 메시지: {result.Error}");
+    }
+
+    [Test]
+    public async Task GetPokemonByNameAsync_TimeoutDataSource_ReturnsFailureResultWithTimeoutError()
+    {
+        var dataSource = new TimeoutMockDataSource();
+        var repository = new PokemonRepository(dataSource);
+
+        var result = await repository.GetPokemonByNameAsync("dittooo");
+
+        Assert.That(result.IsSuccess, Is.False);
+        Assert.That(result.ErrorType, Is.EqualTo(ErrorType.Timeout));
+        Assert.That(result.Error, Is.Not.Null.And.Contains("시간 초과"));
+        TestContext.WriteLine($"에러 메시지: {result.Error}");
+    }
+
+    [Test]
+    public async Task GetPokemonByNameAsync_JsonErrorDataSource_ReturnsFailureResultWithParsingError()
+    {
+        var dataSource = new JsonErrorMockDataSource();
+        var repository = new PokemonRepository(dataSource);
+
+        var result = await repository.GetPokemonByNameAsync("dittooo");
+
+        Assert.That(result.IsSuccess, Is.False);
+        Assert.That(result.ErrorType, Is.EqualTo(ErrorType.ParsingError));
+        Assert.That(result.Error, Is.Not.Null.And.Contains("파싱"));
+        TestContext.WriteLine($"에러 메시지: {result.Error}");
     }
 }

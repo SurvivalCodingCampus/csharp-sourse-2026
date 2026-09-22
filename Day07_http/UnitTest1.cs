@@ -12,7 +12,8 @@ public class Tests
     public async Task Setup()
     {
         var repository = new PokemonRepository(new PokemonDataSource());
-        _pokemon = await repository.GetPokemonByNameAsync("glimmora");
+        var result = await repository.GetPokemonByNameAsync("glimmora");
+        _pokemon = result.IsSuccess ? result.Value : null;
     }
 
     [Test]
@@ -43,4 +44,4 @@ public class Tests
         Assert.That(types, Is.EqualTo(new[] { "rock", "poison" }));
         TestContext.WriteLine($"타입: {string.Join(", ", types ?? [])}");
     }
-}
+    }
