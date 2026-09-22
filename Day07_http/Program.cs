@@ -24,21 +24,14 @@ class Program
                 Console.WriteLine(pokemon.ImageUrl);
                 break;
             case Result<Pokemon, PokemonError>.Failure failure:
-                switch (failure.Error)
+                // 패턴 매칭
+                string message = failure.Error switch
                 {
-                    case PokemonError.NotFound:
-                        Console.WriteLine("Not found");
-                        break;
-                    case PokemonError.NetworkTimeout:
-                        Console.WriteLine("Network timeout");
-                        break;
-                    case PokemonError.Unknown:
-                        Console.WriteLine("Unknown error");
-                        break;
-                    default:
-                        Console.WriteLine("Unknown error");
-                        break;
-                }
+                    PokemonError.NotFound => "Not found",
+                    PokemonError.NetworkTimeout => "Network timeout",
+                    _ => "Unknown error"
+                };
+                Console.WriteLine(message);
                 break;
         }
         
