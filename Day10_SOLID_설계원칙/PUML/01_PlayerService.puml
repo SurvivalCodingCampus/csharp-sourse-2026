@@ -1,0 +1,54 @@
+
+@startuml 01_PlayerService
+
+title 1. PlayerService - 플레이어 정보(코인/에너지/닉네임/아바타) 관리
+
+skinparam classAttributeIconSize 0
+
+class Player {
+  - PlayerId: Guid
+  - DisplayNickname: string
+  - SelectedNationalFlagCode: string
+  - CoinBalance: int
+  - EnergyPoints: int
+  - ActiveZoneId: Guid
+  - ActiveLevelId: Guid
+  + IncreaseCoinBalance(amountToAdd: int): void
+  + DecreaseCoinBalance(amountToSpend: int): bool
+  + IncreaseEnergyPoints(amountToAdd: int): void
+  + DecreaseEnergyPoints(amountToSpend: int): bool
+  + ChangeNickname(newNickname: string): void
+  + ChangeSelectedNationalFlag(newNationalFlagCode: string): void
+}
+
+interface PlayerRepository {
+  + FindPlayerById(playerId: Guid): Task<Player>
+  + SavePlayer(player: Player): Task
+  + AdjustCoinBalance(playerId: Guid, coinChangeAmount: int): Task
+  + AdjustEnergyPoints(playerId: Guid, energyChangeAmount: int): Task
+}
+
+interface PlayerService {
+  + GetPlayerProfile(playerId: Guid): Result<Player, ServiceError>
+  + EarnCoins(playerId: Guid, coinsToAdd: int): Result<Player, ServiceError>
+  + SpendCoins(playerId: Guid, coinsToSpend: int): Result<Player, ServiceError>
+  + ConsumeEnergy(playerId: Guid, energyToSpend: int): Result<Player, ServiceError>
+  + ChangeNickname(playerId: Guid, newNickname: string): Result<Player, ServiceError>
+  + ChangeNationalFlag(playerId: Guid, newNationalFlagCode: string): Result<Player, ServiceError>
+}
+
+class ServiceError <<see 00_CommonTypes>>
+
+PlayerService ..> PlayerRepository : Task<T> 결과를 기다림(await)
+PlayerService ..> Player
+PlayerRepository ..> Player
+PlayerService ..> ServiceError : 실패 시 반환
+
+note right of PlayerService
+  판정(비즈니스 규칙)은 여기서만 처리됨:
+  - SpendCoins: 보유 코인보다 많이 쓰려 하면 NotEnoughCoins 실패
+  - ConsumeEnergy: 보유 에너지보다 많이 쓰려 하면 NotEnoughEnergy 실패
+  - ChangeNickname: 닉네임 형식이 잘못되면 InputWasInvalid 실패
+end note
+
+@enduml
