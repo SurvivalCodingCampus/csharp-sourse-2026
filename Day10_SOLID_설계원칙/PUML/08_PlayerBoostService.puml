@@ -1,0 +1,58 @@
+
+@startuml 08_PlayerBoostService
+
+title 8. PlayerBoostService - 보유 부스트 아이템(폭탄/스왑 등) 관리
+
+skinparam classAttributeIconSize 0
+
+enum BoostKind {
+  Bomb
+  Swap
+  Magnifier
+  Hammer
+  Potion
+  Dice
+}
+
+class PlayerBoostInventory {
+  - PlayerId: Guid
+  - BoostKind: BoostKind
+  - OwnedQuantity: int
+  + AddToInventory(amountToAdd: int): void
+  + UseFromInventory(amountToUse: int): bool
+}
+
+class BoostSelectionForSession {
+  - GameSessionId: Guid
+  - BoostKind: BoostKind
+  - SelectedQuantity: int
+}
+
+interface PlayerBoostRepository {
+  + FindInventoryByPlayerId(playerId: Guid): Task<List<PlayerBoostInventory>>
+  + SaveInventory(inventory: PlayerBoostInventory): Task
+}
+
+interface PlayerBoostService {
+  + ListOwnedBoosts(playerId: Guid): Result<List<PlayerBoostInventory>, ServiceError>
+  + AddBoost(playerId: Guid, boostKind: BoostKind, amountToAdd: int): Result<PlayerBoostInventory, ServiceError>
+  + ReserveBoostsForSession(playerId: Guid, selections: List<BoostSelectionForSession>): Result<List<PlayerBoostInventory>, ServiceError>
+}
+
+class ServiceError <<see 00_CommonTypes>>
+
+BoostSelectionForSession "*" --> "1" BoostKind
+PlayerBoostInventory "1" -- "1" BoostKind
+
+PlayerBoostService ..> PlayerBoostRepository : Task<T> 결과를 기다림(await)
+PlayerBoostService ..> PlayerBoostInventory
+PlayerBoostRepository ..> PlayerBoostInventory
+PlayerBoostService ..> ServiceError : 실패 시 반환
+
+note right of PlayerBoostService
+  판정 규칙: ReserveBoostsForSession은 요청한 수량이
+  보유 수량(OwnedQuantity)보다 많으면 NotEnoughBoostQuantity 실패.
+  게임 시작 시 GameSessionService가 이 서비스를 호출함.
+end note
+
+@enduml
