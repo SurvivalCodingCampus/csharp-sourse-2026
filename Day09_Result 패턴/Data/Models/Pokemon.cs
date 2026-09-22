@@ -1,4 +1,4 @@
-﻿namespace Day07_http_WithAI.Models;
+﻿namespace Day09_Result_패턴.Data.Models;
 
 using Newtonsoft.Json;
 
