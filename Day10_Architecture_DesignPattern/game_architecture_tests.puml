@@ -1,0 +1,278 @@
+@startuml
+title Mobile Game Architecture - Test Design
+
+top to bottom direction
+skinparam ClassAttributeIconSize 0
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+skinparam class {
+  BackgroundColor White
+  BorderColor #4A5568
+  ArrowColor #4A5568
+}
+
+' ==================================================
+' Production contracts and targets
+' 테스트 다이어그램에 필요한 이름만 표시한다.
+' ==================================================
+
+package "Production Code" {
+
+  package Core {
+    class Result <<production>>
+    class "Result<T>" as ResultT <<production>>
+    enum ErrorType <<production>>
+  }
+
+  package Domain {
+    class GameState <<production>>
+    class Player <<production>>
+    class Level <<production>>
+    class Zone <<production>>
+    class Task <<production>>
+    class Entity <<production>>
+    class GameSession <<production>>
+  }
+
+  package Application {
+    interface GameRepository <<production>>
+    class GameService <<production>>
+  }
+
+  package Infrastructure {
+    class GameSaveDto <<production>>
+    class GameSaveMapper <<production>>
+
+    interface GameDataSource <<production>>
+    class JsonGameDataSource <<production>>
+    class LocalGameRepository <<production>>
+  }
+}
+
+' ==================================================
+' Test doubles
+' 실제 파일 없이 Service와 Repository를 독립 검증한다.
+' ==================================================
+
+package "Test Doubles" {
+
+  class FakeGameRepository <<fake>> {
+    + loadResult: Result<GameState>
+    + saveResult: Result
+    + loadCallCount: Integer
+    + saveCallCount: Integer
+    + lastSavedState: GameState
+    + load(playerId: String): Result<GameState>
+    + save(state: GameState): Result
+  }
+
+  class FakeGameDataSource <<fake>> {
+    + dtoToLoad: GameSaveDto
+    + throwOnLoad: Boolean
+    + throwOnSave: Boolean
+    + loadCallCount: Integer
+    + saveCallCount: Integer
+    + lastSavedDto: GameSaveDto
+    + load(playerId: String): GameSaveDto
+    + save(dto: GameSaveDto)
+  }
+
+  class GameStateFixture <<fixture>> {
+    + validState(): GameState
+    + taskCompletableState(): GameState
+    + playingSessionState(): GameState
+  }
+}
+
+FakeGameRepository ..|> GameRepository
+FakeGameDataSource ..|> GameDataSource
+GameStateFixture ..> GameState : creates
+
+' ==================================================
+' P0 - Domain unit tests
+' 가장 빠르고 먼저 실행할 순수 C# 테스트
+' ==================================================
+
+package "P0 - Domain Unit Tests" {
+
+  class PlayerTests <<NUnit>> {
+    + AddCoins_WithPositiveAmount_IncreasesCoins()
+    + AddCoins_WithInvalidAmount_ReturnsInvalidInput()
+    + ReduceCoins_WithEnoughCoins_DecreasesCoins()
+    + ReduceCoins_WithInsufficientCoins_PreservesState()
+    + ReduceGoldenKeys_WithInsufficientKeys_PreservesState()
+    + UpdateProfile_WithInvalidName_PreservesProfile()
+  }
+
+  class TaskTests <<NUnit>> {
+    + AddProgress_WithPositiveAmount_IncreasesProgress()
+    + AddProgress_OverTotal_ClampsOrRejectsByPolicy()
+    + Complete_WhenRequirementMet_CompletesTask()
+    + Complete_WhenRequirementNotMet_ReturnsInvalidState()
+    + Complete_WhenAlreadyCompleted_ReturnsAlreadyCompleted()
+  }
+
+  class ProgressModelTests <<NUnit>> {
+    + ZoneProgress_OverMaximum_IsRejected()
+    + GoldenKeyActivation_WhenRepeated_IsRejected()
+    + EntityUpgrade_WhenValid_IncreasesLevel()
+    + EntityUpgrade_OverMaximum_IsRejected()
+    + LevelStars_OutsideRange_AreRejected()
+  }
+
+  class GameSessionTests <<NUnit>> {
+    + ConsumeMove_WhilePlaying_DecreasesMoves()
+    + ConsumeMove_WithNoMoves_ReturnsInvalidState()
+    + ConsumeMove_AfterFinish_ReturnsInvalidState()
+    + UseBoost_WhenUnavailable_ReturnsInvalidState()
+    + PauseThenResume_ChangesStatusCorrectly()
+    + Finish_WhenAlreadyFinished_ReturnsInvalidState()
+  }
+
+  class GameStateTests <<NUnit>> {
+    + FindExistingModel_ReturnsSuccess()
+    + FindMissingLevel_ReturnsNotFound()
+    + FindMissingTask_ReturnsNotFound()
+    + FindMissingSession_ReturnsNotFound()
+  }
+
+  class ResultTests <<NUnit>> {
+    + Success_HasValueAndNoError()
+    + Failure_HasErrorAndNoUsableValue()
+    + InvalidSuccessFailureCombination_CannotBeCreated()
+  }
+}
+
+PlayerTests ..> Player : tests
+TaskTests ..> Task : tests
+ProgressModelTests ..> Zone : tests
+ProgressModelTests ..> Entity : tests
+ProgressModelTests ..> Level : tests
+GameSessionTests ..> GameSession : tests
+GameStateTests ..> GameState : tests
+ResultTests ..> Result : tests
+ResultTests ..> ResultT : tests
+
+' ==================================================
+' P0 - Application service tests
+' Fake Repository로 유스케이스와 저장 시점을 검증한다.
+' ==================================================
+
+package "P0 - Application Unit Tests" {
+
+  class GameServiceTests <<NUnit>> {
+    + CompleteTask_WhenValid_ChangesAllRelatedModels()
+    + CompleteTask_WhenValid_SavesExactlyOnce()
+    + CompleteTask_WhenTaskMissing_ReturnsNotFound()
+    + CompleteTask_WhenKeysInsufficient_DoesNotSave()
+    + CompleteTask_WhenAlreadyCompleted_DoesNotSave()
+    + CompleteTask_WhenModelChangeFails_DoesNotSave()
+    + CompleteTask_WhenSaveFails_ReturnsSaveFailed()
+    + StartGame_WhenLevelLocked_DoesNotSave()
+    + MakeMove_WhenSessionFinished_DoesNotSave()
+    + FinishGame_WhenCalledTwice_DoesNotRewardTwice()
+  }
+}
+
+GameServiceTests ..> GameService : tests
+GameServiceTests --> FakeGameRepository : injects
+GameServiceTests --> GameStateFixture : uses
+
+note right of GameServiceTests
+  핵심 규칙
+
+  모든 변경 성공:
+  saveCallCount = 1
+
+  어느 단계든 실패:
+  saveCallCount = 0
+end note
+
+' ==================================================
+' P1 - Infrastructure tests
+' 변환과 오류 매핑, 실제 JSON 저장을 검증한다.
+' ==================================================
+
+package "P1 - Infrastructure Tests" {
+
+  class GameSaveMapperTests <<NUnit>> {
+    + DomainToDtoToDomain_PreservesAllFields()
+    + ToDomain_WithInvalidEntityType_ReturnsInvalidData()
+    + ToDomain_WithInvalidGameStatus_ReturnsInvalidData()
+    + ToDomain_WithNegativeCurrency_ReturnsInvalidData()
+    + ToDomain_WithBrokenReference_ReturnsInvalidData()
+  }
+
+  class LocalGameRepositoryTests <<NUnit>> {
+    + Load_WhenValid_ReturnsNewGameState()
+    + Load_WhenDataSourceThrows_ReturnsIoError()
+    + Load_WhenMappingFails_ReturnsInvalidData()
+    + Save_WhenValid_PassesMappedDtoToDataSource()
+    + Save_WhenDataSourceThrows_ReturnsSaveFailed()
+    + RepeatedLoad_ReturnsDifferentInstances()
+  }
+
+  class JsonGameDataSourceTests <<NUnit>> {
+    + SaveThenLoad_PreservesDto()
+    + Load_WhenFileMissing_ThrowsExpectedException()
+    + Load_WhenJsonCorrupted_ThrowsExpectedException()
+    + Save_WithKoreanText_PreservesEncoding()
+    + Save_WhenReplacementFails_PreservesOriginalFile()
+  }
+}
+
+GameSaveMapperTests ..> GameSaveMapper : tests
+GameSaveMapperTests --> GameStateFixture : uses
+
+LocalGameRepositoryTests ..> LocalGameRepository : tests
+LocalGameRepositoryTests --> FakeGameDataSource : injects
+
+JsonGameDataSourceTests ..> JsonGameDataSource : tests
+
+note right of JsonGameDataSourceTests
+  테스트마다 임시 폴더를 사용하고
+  종료 후 생성한 파일을 정리한다.
+end note
+
+' ==================================================
+' P2 - Minimal integration tests
+' 실제 계층을 연결한 핵심 흐름만 검증한다.
+' ==================================================
+
+package "P2 - Integration Tests" {
+
+  class GameFlowIntegrationTests <<NUnit>> {
+    + CompleteTask_SaveAndReload_PreservesProgress()
+    + StartMoveBoostFinish_SaveAndReload_PreservesSession()
+    + FailedSave_DoesNotCorruptPreviousSave()
+  }
+}
+
+GameFlowIntegrationTests ..> GameService
+GameFlowIntegrationTests ..> LocalGameRepository
+GameFlowIntegrationTests ..> JsonGameDataSource
+GameFlowIntegrationTests --> GameStateFixture : uses
+
+note bottom of GameFlowIntegrationTests
+  실제 연결:
+  GameService
+  -> LocalGameRepository
+  -> JsonGameDataSource
+end note
+
+' ==================================================
+' Test execution policy
+' ==================================================
+
+legend bottom
+  |= 우선순위 |= 목적 |
+  | P0 | Domain 규칙과 Service 저장 조건 |
+  | P1 | Mapper, Repository, JSON I/O |
+  | P2 | 핵심 사용자 흐름 통합 검증 |
+
+  기본 실행: Unity EditMode + NUnit
+  PlayMode: MonoBehaviour, UI, 씬 연결 시 별도 추가
+endlegend
+
+@enduml

@@ -36,6 +36,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Day09_Result_Test", "Day09_
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Day09_MetroService", "Day09_MetroService\Day09_MetroService.csproj", "{19ADAA60-5F92-4A45-B614-1EACC1B2ADEA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Day10_Architecture_DesignPattern", "Day10_Architecture_DesignPattern\Day10_Architecture_DesignPattern.csproj", "{D2172BC7-41B4-439B-B539-AF7B9C110447}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -262,6 +264,18 @@ Global
 		{19ADAA60-5F92-4A45-B614-1EACC1B2ADEA}.Release|x64.Build.0 = Release|Any CPU
 		{19ADAA60-5F92-4A45-B614-1EACC1B2ADEA}.Release|x86.ActiveCfg = Release|Any CPU
 		{19ADAA60-5F92-4A45-B614-1EACC1B2ADEA}.Release|x86.Build.0 = Release|Any CPU
+		{D2172BC7-41B4-439B-B539-AF7B9C110447}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D2172BC7-41B4-439B-B539-AF7B9C110447}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D2172BC7-41B4-439B-B539-AF7B9C110447}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{D2172BC7-41B4-439B-B539-AF7B9C110447}.Debug|x64.Build.0 = Debug|Any CPU
+		{D2172BC7-41B4-439B-B539-AF7B9C110447}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{D2172BC7-41B4-439B-B539-AF7B9C110447}.Debug|x86.Build.0 = Debug|Any CPU
+		{D2172BC7-41B4-439B-B539-AF7B9C110447}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D2172BC7-41B4-439B-B539-AF7B9C110447}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D2172BC7-41B4-439B-B539-AF7B9C110447}.Release|x64.ActiveCfg = Release|Any CPU
+		{D2172BC7-41B4-439B-B539-AF7B9C110447}.Release|x64.Build.0 = Release|Any CPU
+		{D2172BC7-41B4-439B-B539-AF7B9C110447}.Release|x86.ActiveCfg = Release|Any CPU
+		{D2172BC7-41B4-439B-B539-AF7B9C110447}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
