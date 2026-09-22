@@ -4,6 +4,10 @@ AI는 [공통 가이드](README.md)를 적용한다. 테스트 방식은 기존 
 
 ## [규칙]
 
+- 테스트 코드는 실제 구현 코드와 분리하여 관리한다.
+- 테스트 코드는 실제 구현 코드의 디렉터리 및 패키지 구조를 가능한 한 동일하게 따른다.
+- 테스트 프로젝트는 실제 프로젝트를 의존할 수 있지만, 실제 프로젝트가 테스트 프로젝트를 의존해서는 안 된다.
+- 테스트 프레임워크가 이미 지정되어 있다면 새로운 프레임워크를 임의로 추가하지 않는다.
 - 프로젝트의 NUnit과 `[TestFixture]`, `[SetUp]`, `[Test]`, `[TestCase]`, `Assert.That` 스타일을 사용한다.
 - 테스트 이름은 기존 코드처럼 한국어로 조건과 기대 결과를 설명한다. Given/When/Then으로 준비·실행·검증을 구분한다.
 - 각 테스트는 독립적으로 실행할 수 있어야 한다. `[SetUp]`에서 필드에 새 대역과 대상 객체를 넣고, 같은 이름의 지역변수로 가리지 않는다.
@@ -13,6 +17,13 @@ AI는 [공통 가이드](README.md)를 적용한다. 테스트 방식은 기존 
 - 예외가 안 났다는 사실만 확인하지 말고 결과의 의미를 검증한다. 실패 경로를 테스트하기 위해 운영 코드를 테스트 전용 분기로 바꾸지 않는다.
 - 비동기 성공 검증은 `async Task`와 `await`, 예외 검증은 `Assert.ThrowsAsync`를 사용한다.
 - record에 `List<T>`가 포함되면 바깥 record의 동등성만 믿지 말고 컬렉션 요소를 따로 검증한다.
+
+
+### 테스트 프로젝트 준비
+
+테스트 프로젝트에는 대상 프로젝트의 `ProjectReference`와 NUnit, `NUnit3TestAdapter`, `Microsoft.NET.Test.Sdk` 참조가 필요하다. 프레임워크와 패키지 버전은 기존 `Day09_Result_Test.csproj` 등 실제 프로젝트 설정을 확인해 맞춘다. 대상 테스트 프로젝트가 이미 있다면 같은 이름의 프로젝트를 중복 생성하지 않는다.
+
+예시의 `GuidelineExample`은 문서용 namespace다. 실제 테스트에 적용할 때는 해당 Good 구현을 준비하거나 실제 프로젝트의 동등한 타입과 namespace로 바꿔야 한다. Day10의 UML만 참조해서는 아직 구현되지 않은 클래스를 컴파일할 수 없다.
 
 ## [Good 예시 코드]
 
@@ -93,6 +104,110 @@ public class FakeWalletRepository(Wallet initialWallet) : IWalletRepository
         Current = wallet;
         SaveCount++;
         return Task.CompletedTask;
+    }
+}
+```
+
+### 실제 파서와 실패 전달 검증
+
+다음 코드는 별도 `.cs` 파일로 작성한다. 외부 서버 대신 HTTP 처리기만 대체하므로 DataSource의 실제 `System.Text.Json` 역직렬화와 Repository·Service의 실패 전달을 실행한다. 대역이 `JsonException`을 직접 던지도록 설정하는 것과 구분한다.
+
+```csharp
+using System.Net;
+using System.Net.Http;
+using System.Text;
+using System.Text.Json;
+using GuidelineExample;
+using NUnit.Framework;
+
+namespace GuidelineExample.Tests;
+
+[TestFixture]
+public class WalletDataFlowTest
+{
+    [TestCase("{")]
+    [TestCase("null")]
+    public void 잘못된_JSON은_DataSource에서_실패한다(string body)
+    {
+        using var httpClient = CreateClient(HttpStatusCode.OK, body);
+        var source = new WalletApiDataSource(httpClient);
+
+        Assert.ThrowsAsync<JsonException>(async () =>
+        {
+            await source.GetWalletAsync();
+        });
+    }
+
+    [TestCase("{}")]
+    [TestCase("{\"coins\":100}")]
+    public async Task 필수값이_누락되면_Mapper를_거쳐_실패로_전달한다(string body)
+    {
+        using var httpClient = CreateClient(HttpStatusCode.OK, body);
+        var repository = new WalletRepository(new WalletApiDataSource(httpClient));
+        var service = new WalletService(repository);
+
+        var result = await service.SpendCoinsAsync(10);
+
+        Assert.That(result, Is.EqualTo(
+            new Result<Wallet, GameError>.Failure(GameError.SerializationFailed)));
+    }
+
+    [Test]
+    public void 없는_지갑은_원인_예외를_보존한다()
+    {
+        using var httpClient = CreateClient(HttpStatusCode.NotFound, "not found");
+        var repository = new WalletRepository(new WalletApiDataSource(httpClient));
+
+        var error = Assert.ThrowsAsync<KeyNotFoundException>(async () =>
+        {
+            await repository.GetWalletAsync();
+        });
+
+        Assert.That(error!.InnerException, Is.TypeOf<HttpRequestException>());
+    }
+
+    [Test]
+    public async Task 조회에_성공해도_저장에_실패하면_Failure를_반환한다()
+    {
+        using var httpClient = CreateClient(
+            HttpStatusCode.OK,
+            "{\"coins\":100,\"golden_keys\":2}",
+            HttpStatusCode.InternalServerError);
+        var service = new WalletService(
+            new WalletRepository(new WalletApiDataSource(httpClient)));
+
+        var result = await service.SpendCoinsAsync(10);
+
+        Assert.That(result, Is.EqualTo(
+            new Result<Wallet, GameError>.Failure(GameError.NetworkError)));
+    }
+
+    private static HttpClient CreateClient(
+        HttpStatusCode getStatus, string body,
+        HttpStatusCode putStatus = HttpStatusCode.NoContent)
+    {
+        return new HttpClient(new StubHttpMessageHandler(getStatus, body, putStatus))
+        {
+            BaseAddress = new Uri("https://example.invalid/")
+        };
+    }
+
+    private sealed class StubHttpMessageHandler(
+        HttpStatusCode getStatus, string body, HttpStatusCode putStatus)
+        : HttpMessageHandler
+    {
+        protected override Task<HttpResponseMessage> SendAsync(
+            HttpRequestMessage request, CancellationToken cancellationToken)
+        {
+            var response = request.Method == HttpMethod.Put
+                ? new HttpResponseMessage(putStatus)
+                : new HttpResponseMessage(getStatus)
+                {
+                    Content = new StringContent(body, Encoding.UTF8, "application/json")
+                };
+
+            return Task.FromResult(response);
+        }
     }
 }
 ```

@@ -63,7 +63,7 @@ View / Program
 
 ## 예시 사용 방법
 
-6개 가이드의 Good 코드는 하나의 `Wallet` 흐름으로 연결된다. 예시의 `GuidelineExample` namespace는 교육용이며 실제 적용 시 대상 프로젝트 namespace로 바꾼다. 각 문서의 첫 번째 Good 코드 블록은 별도 `.cs` 파일로 볼 수 있다. DTO → Mapper → DataSource → Repository → Result → Test 순서로 읽으면 된다.
+6개 가이드의 Good 코드는 하나의 `Wallet` 흐름으로 연결된다. 예시의 `GuidelineExample` namespace는 교육용이며 실제 적용 시 대상 프로젝트 namespace로 바꾼다. 각 Good 코드 블록은 별도 `.cs` 파일로 볼 수 있다. DTO → Mapper → DataSource → Repository → Result → Test 순서로 읽으면 된다. Test에는 실제 JSON 파싱을 거치는 실패 검증 예시, Result에는 호출 측의 패턴 매칭 예시도 포함한다.
 
 외부 API 규격은 제공되지 않았으므로 `wallet` 경로와 `coins`, `golden_keys` 필드는 **예시 계약**이다. 실제 API에 그대로 요청하지 않는다. 예시의 `HttpClient`는 호출 측에서 `BaseAddress`를 설정해 주입하며, 테스트는 외부 서버에 접속하지 않는다.
 
@@ -86,6 +86,6 @@ Bad 예시는 다음을 구분한다.
 
 ## 예시 검증 결과
 
-- 각 가이드의 첫 번째 Good 코드 블록 6개를 임시 프로젝트로 추출하여 설치된 .NET SDK로 컴파일했다. nullable 검사와 경고의 오류 처리를 켠 상태에서 통과했다.
-- 외부 API를 호출하지 않는 검증 프로그램으로 26개 검사를 통과했다. 문서의 NUnit 예시 4개 실행 경우와 DTO 누락·0 구분, Mapper 필수값 검사, 조회·저장 연결, 잘못된 JSON, HTTP 실패, 저장 실패, 잔액 경계값, 예외 분류를 포함한다.
+- 가이드의 Good 코드 블록 8개를 임시 프로젝트로 추출하여 설치된 .NET SDK로 컴파일했다. nullable 검사와 경고의 오류 처리를 켠 상태에서 통과했다.
+- 외부 API를 호출하지 않는 검증 프로그램으로 38개 검사를 통과했다. 문서의 NUnit 예시 10개 실행 경우와 DTO 누락·0 구분, Mapper 필수값 검사, 조회·저장 연결, 잘못된 JSON, HTTP 실패, 저장 실패, 잔액 경계값, 예외 분류, 호출 측 결과 표시를 포함한다.
 - NUnit 예시는 검증 프로그램에서 메서드를 직접 호출했다. NUnit 테스트 러너로 기존 프로젝트 전체를 실행한 결과는 아니다.

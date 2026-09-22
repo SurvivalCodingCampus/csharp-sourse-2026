@@ -88,6 +88,49 @@ public class WalletService(IWalletRepository walletRepository)
 
 이 예시는 호출 측 취소 토큰을 지원하지 않는 계약이다. 취소를 지원하도록 확장할 때는 `TaskCanceledException`을 무조건 오류로 바꾸지 말고 토큰의 취소 여부에 따라 다시 전파한다. 저장이 실패하면 Success를 반환하지 않는다. 통신 오류가 반환되더라도 원격 저장이 이미 반영되었을 수 있으므로 무조건 재시도하지 않는다.
 
+### 호출 측의 결과 사용
+
+다음은 View 또는 Program에서 사용할 표시용 코드다. 별도 `.cs` 파일에 두며, 화면 문구를 결정하는 책임이므로 Repository나 Service에 넣지 않는다. 호출 측은 `await service.SpendCoinsAsync(amount)`의 반환값을 전달한다.
+
+```csharp
+namespace GuidelineExample;
+
+public static class WalletResultView
+{
+    public static string ToMessage(Result<Wallet, GameError> result)
+    {
+        return result switch
+        {
+            Result<Wallet, GameError>.Success success =>
+                $"남은 코인: {success.Data.Coins}",
+            Result<Wallet, GameError>.Failure failure => failure.Error switch
+            {
+                GameError.InvalidAmount => "소비할 수량은 1 이상이어야 합니다.",
+                GameError.InsufficientCoins => "코인이 부족합니다.",
+                GameError.NotFound => "지갑을 찾을 수 없습니다.",
+                GameError.SerializationFailed => "지갑 데이터 형식을 확인해 주세요.",
+                GameError.NetworkError => "통신 상태를 확인해 주세요.",
+                _ => throw new ArgumentOutOfRangeException(nameof(result))
+            },
+            _ => throw new InvalidOperationException("알 수 없는 결과 타입입니다.")
+        };
+    }
+}
+```
+
+### 이 예시의 실패 계약
+
+| 발생 조건 | 발생·판단 위치 | 최종 결과 |
+|---|---|---|
+| 수량이 0 이하 | Service 입력 검사 | `Failure(InvalidAmount)` |
+| 잔액 부족 | Service 규칙 검사 | `Failure(InsufficientCoins)` |
+| HTTP 404 | DataSource → Repository의 `KeyNotFoundException` 변환 | `Failure(NotFound)` |
+| 잘못된 JSON 또는 필수 필드 누락 | DataSource 또는 Mapper의 `JsonException` | `Failure(SerializationFailed)` |
+| 기타 HTTP 오류·통신 오류·타임아웃 | DataSource / Repository | `Failure(NetworkError)` |
+| 예상하지 않은 프로그래밍 오류 | 발생 계층 | 상위로 전파하여 원인 확인 |
+
+`NetworkError`는 이 예시에서 서버 오류까지 포함한 단순 분류다. 인증·권한·서버 장애를 따로 처리해야 하는 요구가 생기면 오류 계약을 확장한다. HTTP 200 본문에 오류 코드가 있는 실제 API는 위 HTTP 상태 기반 예시를 그대로 복사하지 말고, 해당 API 코드 판별을 DataSource 또는 Repository의 기술적 오류 처리에 추가한다.
+
 ## [Bad 예시 코드]
 
 **현재 코드에서 확인한 개선 대상:** [Day08 PokemonRepository.cs](../Day08_DTO_Mapper/Data/Repository/PokemonRepository.cs)의 실패 처리다.
