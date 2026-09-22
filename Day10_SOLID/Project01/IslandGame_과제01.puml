@@ -1,0 +1,309 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam packageStyle rectangle
+skinparam linetype ortho
+
+title Island (Match-3) - Domain Model & Repository Interfaces (C#)
+
+package "Domain Model" {
+
+  '=========================
+  ' Player / Account
+  '=========================
+  class Player {
+    - playerId: Guid
+    - playerNickName: string
+    - selectedNationalFlagType: string
+    - coinBalance: int
+    - energyPoints: int
+    - currentZoneId: Guid
+    - currentLevelId: Guid
+    + addCoins(amount: int): void
+    + spendCoins(amount: int): bool
+    + addEnergy(amount: int): void
+    + consumeEnergy(amount: int): bool
+    + changePlayerName(newName: string): void
+    + changeNationalFlagType(NationalFlagType: string): void
+  }
+
+  class NationalFlagOption {
+    - NationalFlagTypeCode: string
+    - displayImageUrl: string
+    - displayOrder: int
+  }
+
+  class GameSettings {
+    - settingsId: Guid
+    - playerId: Guid
+    - isSoundEnabled: bool
+    - isMusicEnabled: bool
+    - musicVolumeLevel: int
+    + toggleSound(): void
+    + toggleMusic(): void
+    + setMusicVolume(volumeLevel: int): void
+  }
+
+  class GoldenKeyProgress {
+    - playerId: Guid
+    - totalKeysEarned: int
+    - levelsClearedSinceLastKey: int
+    - levelRequiredPerKey: int
+    + registerLevelCleared(): void
+    + checkKeyEarned(): bool
+    + resetProgressCycle(): void
+  }
+
+  '=========================
+  ' World / Zone / Level
+  '=========================
+  class Zone {
+    - zoneId: Guid
+    - zoneName: string
+    - displayOrder: int
+    - totalLevelsInZone: int
+    - backgroundImageUrl: string
+  }
+
+  class ZoneProgress {
+    - zoneId: Guid
+    - levelsCompleted: int
+    - totalLevels: int
+    + incrementProgress(amount: int): void
+    + getProgressRatio(): float
+    + isZoneComplete(): bool
+  }
+
+  enum LevelUnlockStatus {
+    LOCKED
+    UNLOCKED
+    COMPLETED
+  }
+
+  enum LevelObjectiveType {
+    COLLECT_GEMS
+    REACH_TARGET_SCORE
+    CLEAR_BLOCKERS
+  }
+
+  class Level {
+    - levelId: Guid
+    - zoneId: Guid
+    - levelNumber: int
+    - unlockStatus: LevelUnlockStatus
+    - starRating: int
+    - bestScoreAchieved: int
+    - moveLimit: int
+    - objectiveType: LevelObjectiveType
+    - objectiveIconUrl: string
+    - objectiveTargetAmount: int
+    + unlockLevel(): void
+    + completeLevel(finalScore: int, starCount: int): void
+    + checkIfLocked(): bool
+  }
+
+  enum TaskProgressStatus {
+    LOCKED
+    IN_PROGRESS
+    READY_TO_CLAIM_REWARD
+    COMPLETED
+  }
+
+  class GameTask {
+    - taskId: Guid
+    - zoneId: Guid
+    - taskName: string
+    - taskIconUrl: string
+    - energyCostToStart: int
+    - taskStatus: TaskProgressStatus
+    - zoneProgressRewardAmount: int
+    + startTask(): void
+    + completeTask(): void
+  }
+
+  '=========================
+  ' Boosts / Inventory
+  '=========================
+  enum BoostPowerType {
+    BOMB
+    TILE_SWAP
+    MAGNIFIER
+    HAMMER
+    ENERGY_POTION
+    LUCKY_DICE
+  }
+
+  class PlayerBoostInventory {
+    - playerId: Guid
+    - boostType: BoostPowerType
+    - quantityOwned: int
+    + addBoosts(quantity: int): void
+    + useBoosts(quantity: int): bool
+  }
+
+  class GameSessionBoostSelection {
+    - gameSessionId: Guid
+    - boostType: BoostPowerType
+    - quantitySelected: int
+  }
+
+  '=========================
+  ' Game Session / Board
+  '=========================
+  enum GamePlayStatus {
+    NOT_STARTED
+    IN_PROGRESS
+    WON
+    LOST
+  }
+
+  class GameSession {
+    - sessionId: Guid
+    - levelId: Guid
+    - playerId: Guid
+    - currentScore: int
+    - collectionProgress: int
+    - collectionTarget: int
+    - movesRemaining: int
+    - gameStatus: GamePlayStatus
+    - starsEarned: int
+    - coinsRewarded: int
+    - sessionStartTime: DateTime
+    - sessionEndTime: DateTime
+    + startGame(): void
+    + executePlayerMove(): void
+    + addScorePoints(points: int): void
+    + collectObjective(amount: int): void
+    + activateBoost(boostType: BoostPowerType): bool
+    + finishGame(): void
+    + checkIfWon(): bool
+  }
+
+  class GameBoard {
+    - boardId: Guid
+    - sessionId: Guid
+    - rowCount: int
+    - columnCount: int
+    + swapAdjacentTiles(tile1: BoardTile, tile2: BoardTile): bool
+    + resolveMatchedTiles(): int
+    + refillBoardWithNewTiles(): void
+  }
+
+  enum GemColorType {
+    RED
+    BLUE
+    YELLOW
+    GREEN
+    PURPLE
+  }
+
+  class BoardTile {
+    - rowPosition: int
+    - columnPosition: int
+    - gemColor: GemColorType
+    - isLocked: bool
+    + canBeMatched(): bool
+  }
+
+  ' ===== Relations =====
+  Player "1" -- "1" GameSettings
+  Player "1" -- "1" GoldenKeyProgress
+  Player "1" -- "*" PlayerBoostInventory
+  Player "1" -- "*" GameSession
+  Player "*" -- "1" NationalFlagOption : selectedNationalFlagType >
+
+  Zone "1" -- "*" Level
+  Zone "1" -- "1" ZoneProgress
+  Zone "1" -- "*" GameTask
+  GameTask "*" --> "1" ZoneProgress : giveProgressReward >
+
+  Level "1" -- "*" GameSession
+  GameSession "1" -- "1" GameBoard
+  GameSession "1" -- "*" GameSessionBoostSelection
+  GameSessionBoostSelection "*" --> "1" BoostPowerType
+  GameBoard "1" -- "*" BoardTile
+  BoardTile "1" -- "1" GemColorType
+}
+
+package "Repository Interfaces" {
+
+  interface IPlayerRepository {
+    + FindPlayerById(playerId: Guid): Task<Player>
+    + SavePlayer(player: Player): Task
+    + UpdatePlayerCoins(playerId: Guid, amountChange: int): Task
+    + UpdatePlayerEnergy(playerId: Guid, amountChange: int): Task
+  }
+
+  interface INationalFlagOptionRepository {
+    + GetAllAvailableNationalFlags(): Task<List<NationalFlagOption>>
+    + FindNationalFlagByCode(NationalFlagTypeCode: string): Task<NationalFlagOption>
+  }
+
+  interface IGameSettingsRepository {
+    + FindSettingsByPlayerId(playerId: Guid): Task<GameSettings>
+    + SaveSettings(settings: GameSettings): Task
+  }
+
+  interface IGoldenKeyRepository {
+    + FindProgressByPlayerId(playerId: Guid): Task<GoldenKeyProgress>
+    + SaveProgress(progress: GoldenKeyProgress): Task
+  }
+
+  interface IZoneRepository {
+    + GetAllZones(): Task<List<Zone>>
+    + FindZoneById(zoneId: Guid): Task<Zone>
+  }
+
+  interface IZoneProgressRepository {
+    + FindProgressByZoneId(zoneId: Guid): Task<ZoneProgress>
+    + SaveProgress(progress: ZoneProgress): Task
+  }
+
+  interface ILevelRepository {
+    + FindLevelsByZoneId(zoneId: Guid): Task<List<Level>>
+    + FindLevelById(levelId: Guid): Task<Level>
+    + SaveLevel(level: Level): Task
+  }
+
+  interface IGameTaskRepository {
+    + FindTasksByZoneId(zoneId: Guid): Task<List<GameTask>>
+    + FindTaskById(taskId: Guid): Task<GameTask>
+    + SaveTask(task: GameTask): Task
+  }
+
+  interface IPlayerBoostInventoryRepository {
+    + FindInventoryByPlayerId(playerId: Guid): Task<List<PlayerBoostInventory>>
+    + SaveInventory(inventory: PlayerBoostInventory): Task
+  }
+
+  interface IGameSessionRepository {
+    + FindSessionById(sessionId: Guid): Task<GameSession>
+    + FindActiveSessionByPlayerId(playerId: Guid): Task<GameSession>
+    + SaveSession(session: GameSession): Task
+  }
+
+  IPlayerRepository ..> Player
+  INationalFlagOptionRepository ..> NationalFlagOption
+  IGameSettingsRepository ..> GameSettings
+  IGoldenKeyRepository ..> GoldenKeyProgress
+  IZoneRepository ..> Zone
+  IZoneProgressRepository ..> ZoneProgress
+  ILevelRepository ..> Level
+  IGameTaskRepository ..> GameTask
+  IPlayerBoostInventoryRepository ..> PlayerBoostInventory
+  IGameSessionRepository ..> GameSession
+}
+
+note bottom
+**C# Type Reference:**
+• **Guid** = System.Guid - Globally Unique Identifier (128-bit unique number)
+• **string** = System.String - Text/character data
+• **int** = System.Int32 - Whole numbers (0, 1, 2, 3, ...)
+• **float** = System.Single - Decimal numbers for ratios/percentages
+• **bool** = System.Boolean - True or False value (logical)
+• **DateTime** = System.DateTime - Date and time value
+• **List<T>** = System.Collections.Generic.List - Collection of multiple items
+• **Task** = System.Threading.Tasks.Task - Represents asynchronous operation
+• **Task<T>** = Asynchronous operation that returns value of type T
+end note
+
+@enduml

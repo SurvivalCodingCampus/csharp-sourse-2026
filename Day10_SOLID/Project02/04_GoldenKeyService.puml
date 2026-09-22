@@ -1,0 +1,41 @@
+
+@startuml 04_GoldenKeyService
+
+title 4. GoldenKeyService - 골든 키(황금 열쇠) 수집 진행도
+
+skinparam classAttributeIconSize 0
+
+class GoldenKeyProgress {
+  - PlayerId: Guid
+  - GoldenKeysCollected: int
+  - LevelsClearedTowardNextKey: int
+  - LevelsNeededPerKey: int
+  + RecordLevelCleared(): void
+  + HasEarnedNewKey(): bool
+  + ResetProgressCounter(): void
+}
+
+interface GoldenKeyRepository {
+  + FindProgressByPlayerId(playerId: Guid): Task<GoldenKeyProgress>
+  + SaveProgress(progress: GoldenKeyProgress): Task
+}
+
+interface GoldenKeyService {
+  + RegisterLevelCleared(playerId: Guid): Result<GoldenKeyProgress, ServiceError>
+}
+
+class ServiceError <<see 00_CommonTypes>>
+
+GoldenKeyService ..> GoldenKeyRepository : Task<T> 결과를 기다림(await)
+GoldenKeyService ..> GoldenKeyProgress
+GoldenKeyRepository ..> GoldenKeyProgress
+GoldenKeyService ..> ServiceError : 실패 시 반환
+
+note right of GoldenKeyService
+  판정 규칙: LevelsClearedTowardNextKey가
+  LevelsNeededPerKey에 도달하면 GoldenKeysCollected를 올리고
+  ResetProgressCounter()를 호출함.
+  게임이 끝나고 이겼을 때 GameSessionService가 이 서비스를 호출함.
+end note
+
+@enduml

@@ -1,0 +1,58 @@
+
+@startuml 00_CommonTypes
+
+title 0. Common Types & Type Glossary
+
+skinparam classAttributeIconSize 0
+
+note as TypeGlossary
+  <b>기본 타입(Type) 용어 설명 - 프로그래밍을 몰라도 이해할 수 있도록</b>
+  ..
+  <b>Guid</b>  = 세상에 단 하나뿐인 고유 식별 번호. 시스템이 자동으로 부여하며
+          사람으로 치면 "주민등록번호" 같은 역할 (예: 3f2a-91c4-...)
+  <b>string</b> = 글자로 된 값(텍스트). 예: "Jeyhun Kelov", "island_zone_1"
+  <b>int</b>    = 소수점 없는 정수. 예: 0, 42, 100
+  <b>float</b>  = 소수점이 있는 실수. 예: 0.75 (75% 진행률 같은 것)
+  <b>bool</b>   = 참(true) 또는 거짓(false), 둘 중 하나만 가능한 값.
+          예/아니오 스위치라고 생각하면 됨 (사운드 켬/끔 등)
+  <b>DateTime</b> = 날짜와 시각을 함께 담는 값. 예: 2026-09-22 14:00:00
+  <b>List<T></b> = 같은 종류의 값을 여러 개 담는 목록(배열)
+  <b>Task<T></b> = C#(.NET)이 기본 제공하는 "비동기 작업" 타입.
+          "지금 당장 결과가 있는 게 아니라 나중에 완료된다"는 뜻.
+          여기서는 별도 박스로 그리지 않고, Repository 메서드의
+          반환 타입 이름으로만 사용함 (예: Task<Player>)
+end note
+
+class "Result<TValue, TError>" as ResultTE <<sealed>> {
+  .. 성공(Success) 또는 실패(Failure) 둘 중 하나만 담는 상자 ..
+  - WasSuccessful: bool
+  + GetValueOrNull(): TValue
+  + GetErrorOrNull(): TError
+  + {static} Success(value: TValue): Result<TValue, TError>
+  + {static} Failure(error: TError): Result<TValue, TError>
+}
+
+enum FailureReason {
+  RecordNotFound
+  NotEnoughCoins
+  NotEnoughEnergy
+  NotEnoughBoostQuantity
+  LevelIsLocked
+  LevelAlreadyCleared
+  GameIsNotInProgress
+  NoMovesRemaining
+  TaskIsNotInProgress
+  InputWasInvalid
+  DataWasChangedByAnotherRequest
+  UnexpectedError
+}
+
+class ServiceError {
+  - Reason: FailureReason
+  - Message: string
+}
+
+ServiceError "*" -- "1" FailureReason
+ResultTE ..> ServiceError : TError >
+
+@enduml
