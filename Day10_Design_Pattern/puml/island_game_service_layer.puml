@@ -1,0 +1,212 @@
+@startuml
+title Island Mobile Game - Service Layer Design (Assignment 2)
+
+left to right direction
+skinparam classAttributeIconSize 0
+skinparam packageStyle rectangle
+hide circle
+
+package "Domain Models from Assignment 1" {
+  class PlayerProfile {
+    +PlayerId: Guid
+    +Nickname: string
+    +AvatarId: string
+  }
+  class PlayerResource {
+    +PlayerId: Guid
+    +ResourceId: string
+    +Amount: int
+  }
+  class Zone {
+    +ZoneId: int
+    +Name: string
+    +ObjectiveCount: int
+  }
+  class ZoneProgress {
+    +PlayerId: Guid
+    +ZoneId: int
+    +CompletedObjectives: int
+  }
+  class Level {
+    +LevelId: int
+    +ZoneId: int
+    +Number: int
+    +MoveLimit: int
+    +TargetItemId: string
+    +TargetCount: int
+  }
+  class LevelProgress {
+    +PlayerId: Guid
+    +LevelId: int
+    +BestScore: int
+    +Stars: int
+    +IsUnlocked: bool
+  }
+  class TaskDefinition {
+    +TaskId: string
+    +ZoneId: int
+    +Title: string
+    +TargetCount: int
+  }
+  class TaskProgress {
+    +PlayerId: Guid
+    +TaskId: string
+    +CurrentCount: int
+    +IsCompleted: bool
+  }
+  class BoosterDefinition {
+    +BoosterId: string
+    +Name: string
+  }
+  class BoosterStock {
+    +PlayerId: Guid
+    +BoosterId: string
+    +Quantity: int
+  }
+  class GameSettings {
+    +PlayerId: Guid
+    +MusicEnabled: bool
+    +SoundEnabled: bool
+  }
+  class GameSession <<transient>> {
+    +PlayerId: Guid
+    +LevelId: int
+    +Score: int
+    +MovesRemaining: int
+    +CollectedTargetCount: int
+    +SelectedBoosterIds: IReadOnlyList<string>
+    +Status: GameStatus
+  }
+  class GameResult <<transient>> {
+    +FinalScore: int
+    +CollectedTargetCount: int
+    +CoinsEarned: int
+  }
+  class BoardTile {
+    +Row: int
+    +Column: int
+    +Kind: TileKind
+  }
+  enum TileKind {
+    Blue
+    Yellow
+    Green
+    Pink
+    Balloon
+  }
+  enum GameStatus {
+    SelectingBoosters
+    ShowingTarget
+    Playing
+    Won
+  }
+}
+
+package "Service Read Models" {
+  class LevelOverview {
+    +Level: Level
+    +Progress: LevelProgress
+    +CanPlay: bool
+  }
+  class TaskOverview {
+    +Task: TaskDefinition
+    +Progress: TaskProgress
+    +CanStart: bool
+  }
+}
+
+package "Services - rules and aggregation" {
+  class ProfileService {
+    +UpdateProfileAsync(playerId: Guid, nickname: string, avatarId: string): Task<Result<PlayerProfile, GameError>>
+    +SaveSettingsAsync(settings: GameSettings): Task<Result<GameSettings, GameError>>
+  }
+
+  class WalletService {
+    +SpendAsync(playerId: Guid, resourceId: string, amount: int): Task<Result<PlayerResource, GameError>>
+    +CreditAsync(playerId: Guid, resourceId: string, amount: int): Task<Result<PlayerResource, GameError>>
+  }
+
+  class ProgressService {
+    +GetLevelMapAsync(playerId: Guid, zoneId: int): Task<Result<IReadOnlyList<LevelOverview>, GameError>>
+    +GetPlayableLevelAsync(playerId: Guid, levelId: int): Task<Result<Level, GameError>>
+    +RecordWinAsync(playerId: Guid, levelId: int, score: int): Task<Result<LevelProgress, GameError>>
+    +AdvanceZoneAsync(playerId: Guid, zoneId: int): Task<Result<ZoneProgress, GameError>>
+  }
+
+  class TaskService {
+    +GetTasksAsync(playerId: Guid, zoneId: int): Task<Result<IReadOnlyList<TaskOverview>, GameError>>
+    +CompleteTaskAsync(playerId: Guid, taskId: string): Task<Result<TaskProgress, GameError>>
+  }
+
+  class GameplayService {
+    +StartLevelAsync(playerId: Guid, levelId: int, boosterIds: IReadOnlyList<string>): Task<Result<GameSession, GameError>>
+    +CompleteLevelAsync(session: GameSession): Task<Result<GameResult, GameError>>
+  }
+}
+
+package "Repository Interfaces - data access only" {
+  interface IPlayerRepository {
+    +GetByIdAsync(playerId: Guid): Task<PlayerProfile?>
+    +SaveAsync(profile: PlayerProfile): Task<PlayerProfile>
+  }
+  interface IResourceRepository {
+    +GetForPlayerAsync(playerId: Guid): Task<IReadOnlyList<PlayerResource>>
+    +SaveAsync(resource: PlayerResource): Task<PlayerResource>
+  }
+  interface ILevelRepository {
+    +GetZonesAsync(): Task<IReadOnlyList<Zone>>
+    +GetByZoneAsync(zoneId: int): Task<IReadOnlyList<Level>>
+    +GetByIdAsync(levelId: int): Task<Level?>
+  }
+  interface ILevelProgressRepository {
+    +GetForPlayerAsync(playerId: Guid): Task<IReadOnlyList<LevelProgress>>
+    +SaveAsync(progress: LevelProgress): Task<LevelProgress>
+  }
+  interface IZoneProgressRepository {
+    +GetByPlayerAndZoneAsync(playerId: Guid, zoneId: int): Task<ZoneProgress?>
+    +SaveAsync(progress: ZoneProgress): Task<ZoneProgress>
+  }
+  interface ITaskRepository {
+    +GetAvailableAsync(zoneId: int): Task<IReadOnlyList<TaskDefinition>>
+    +GetProgressAsync(playerId: Guid): Task<IReadOnlyList<TaskProgress>>
+    +SaveProgressAsync(progress: TaskProgress): Task<TaskProgress>
+  }
+  interface IBoosterRepository {
+    +GetCatalogAsync(): Task<IReadOnlyList<BoosterDefinition>>
+    +GetStockAsync(playerId: Guid): Task<IReadOnlyList<BoosterStock>>
+    +SaveStockAsync(stock: BoosterStock): Task<BoosterStock>
+  }
+  interface ISettingsRepository {
+    +GetByPlayerIdAsync(playerId: Guid): Task<GameSettings?>
+    +SaveAsync(settings: GameSettings): Task<GameSettings>
+  }
+}
+
+package "Service Outcome" {
+  abstract class "Result<TData, TError>" as Result
+  enum GameError {
+    NotFound
+    InvalidInput
+    LevelLocked
+    BoosterUnavailable
+    InsufficientResource
+    TargetNotMet
+    TaskUnavailable
+    DataUnavailable
+  }
+}
+
+ProfileService ..> IPlayerRepository
+ProfileService ..> ISettingsRepository
+WalletService ..> IResourceRepository
+ProgressService ..> ILevelRepository
+ProgressService ..> ILevelProgressRepository
+ProgressService ..> IZoneProgressRepository
+ProgressService ..> WalletService
+TaskService ..> ITaskRepository
+TaskService ..> ProgressService
+GameplayService ..> IBoosterRepository
+GameplayService ..> ProgressService
+GameplayService ..> WalletService
+
+@enduml
