@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 
 namespace Day09_Result_Test.Data.DataSource;
 
-public class MockDataSource
+public class MockData
 {
     public async Task<Response> GetPokemonAsyncTimeoutException(string pokemonName, PokemonError errorType)
     {

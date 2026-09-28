@@ -19,7 +19,7 @@ public class PokemonRepositoryTest
 [Test]
     public void 기존_Mock에서_TimeoutException이_발생한다()
     {
-        var mock = new MockDataSource();
+        var mock = new MockData();
 
         Assert.ThrowsAsync<TimeoutException>(async () =>
         {
@@ -32,7 +32,7 @@ public class PokemonRepositoryTest
     [Test]
     public void 기존_Mock에서_JsonSerializationException이_발생한다()
     {
-        var mock = new MockDataSource();
+        var mock = new MockData();
 
         Assert.ThrowsAsync<JsonSerializationException>(async () =>
         {
@@ -83,7 +83,7 @@ public class PokemonRepositoryTest
     // 기존 Mock의 타임아웃 메서드를 인터페이스에 연결한다.
     private sealed class TimeoutMockAdapter : IPokemonApiDataSource
     {
-        private readonly MockDataSource _mock = new MockDataSource();
+        private readonly MockData _mock = new MockData();
 
         public Task<Response> GetPokemonAsync(string pokemonName)
         {
@@ -96,7 +96,7 @@ public class PokemonRepositoryTest
     // 기존 Mock의 JSON 예외 메서드를 인터페이스에 연결한다.
     private sealed class SerializationMockAdapter : IPokemonApiDataSource
     {
-        private readonly MockDataSource _mock = new MockDataSource();
+        private readonly MockData _mock = new MockData();
 
         public Task<Response> GetPokemonAsync(string pokemonName)
         {

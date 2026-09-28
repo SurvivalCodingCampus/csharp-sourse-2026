@@ -1,0 +1,237 @@
+@startuml
+scale .75
+skinparam classAttributeIconSize 0
+
+' 과제 1: 필요한 데이터 모델과 조회/저장 인터페이스를 정의한다.
+' +는 외부 공개, -는 내부 전용이며 Task는 비동기 작업을 나타낸다.
+
+' record의 위치 매개변수와 자동 생성 속성을 UML 생성자와 get/init 속성으로 표현한다.
+
+
+' =========================
+' 데이터 모델
+' =========================
+
+package "Data.Models" {
+
+    ' 플레이어의 식별자, 닉네임, 아바타 정보를 보관한다.
+    class PlayerProfile <<record>> {
+        {field} +string PlayerId { get; init; }
+        {field} +string Nickname { get; init; }
+        {field} +string AvatarId { get; init; }
+        +PlayerProfile(string PlayerId, string Nickname, string AvatarId)
+    }
+
+    ' 프로필과 분리하여 코인과 황금 열쇠 보유량을 나타낸다.
+    class Wallet <<record>> {
+        {field} +int Coins { get; init; }
+        {field} +int GoldenKeys { get; init; }
+        +Wallet(int Coins, int GoldenKeys)
+    }
+
+    ' 음악, 효과음, 언어 등 사용자 설정을 보관한다.
+    class GameSettings <<record>> {
+        {field} +bool BgmEnabled { get; init; }
+        {field} +bool SfxEnabled { get; init; }
+        {field} +string Language { get; init; }
+        +GameSettings(bool BgmEnabled, bool SfxEnabled, string Language)
+    }
+
+    ' 레벨 이름과 이동 제한 등 게임의 기본 데이터를 나타낸다.
+    class Level <<record>> {
+        {field} +int Id { get; init; }
+        {field} +string Name { get; init; }
+        {field} +int MoveLimit { get; init; }
+        +Level(int Id, string Name, int MoveLimit)
+    }
+
+    ' 해당 레벨에서 달성해야 할 목표 종류와 수량을 나타낸다.
+    class LevelGoal <<record>> {
+        {field} +GoalType Type { get; init; }
+        {field} +int TargetCount { get; init; }
+        +LevelGoal(GoalType Type, int TargetCount)
+    }
+
+    ' 점수 달성, 수집, 제거 중 목표 종류를 구분한다.
+    enum GoalType {
+        Score
+        Collect
+        Remove
+    }
+
+    ' 플레이어별 잠금 해제, 클리어 여부, 별과 최고 점수를 기록한다.
+    class LevelProgress <<record>> {
+        {field} +int LevelId { get; init; }
+        {field} +bool IsUnlocked { get; init; }
+        {field} +bool IsCleared { get; init; }
+        {field} +int Stars { get; init; }
+        {field} +int BestScore { get; init; }
+        +LevelProgress(int LevelId, bool IsUnlocked, bool IsCleared, int Stars, int BestScore)
+    }
+
+    ' 미션 내용과 현재 진행량, 목표량, 보상 수령 상태를 나타낸다.
+    class Mission <<record>> {
+        {field} +int Id { get; init; }
+        {field} +string Title { get; init; }
+        {field} +int CurrentProgress { get; init; }
+        {field} +int TargetProgress { get; init; }
+        {field} +MissionStatus Status { get; init; }
+        +Mission(int Id, string Title, int CurrentProgress, int TargetProgress, MissionStatus Status)
+    }
+
+    ' 미션 진행 중, 완료, 보상 수령 완료를 구분한다.
+    enum MissionStatus {
+        InProgress
+        Completed
+        RewardClaimed
+    }
+
+    ' 지급할 보상의 수량을 나타내며 실제 지급은 Service에서 처리한다.
+    class Reward <<record>> {
+        {field} +int Coins { get; init; }
+        {field} +int GoldenKeys { get; init; }
+        +Reward(int Coins, int GoldenKeys)
+    }
+
+    ' 현재 플레이 중인 레벨의 점수, 남은 이동 횟수, 상태를 보관한다.
+    class GameSession <<record>> {
+        {field} +int LevelId { get; init; }
+        {field} +int Score { get; init; }
+        {field} +int RemainingMoves { get; init; }
+        {field} +GameState State { get; init; }
+        +GameSession(int LevelId, int Score, int RemainingMoves, GameState State)
+    }
+
+    ' 게임의 준비, 진행, 승리, 패배 상태를 구분한다.
+    enum GameState {
+        Ready
+        Playing
+        Win
+        Lose
+    }
+
+    ' 퍼즐판의 가로와 세로 크기를 나타낸다.
+    class Board <<record>> {
+        {field} +int Width { get; init; }
+        {field} +int Height { get; init; }
+        +Board(int Width, int Height)
+    }
+
+    ' 퍼즐판에 놓인 타일의 행, 열, 종류를 나타낸다.
+    class Tile <<record>> {
+        {field} +int Row { get; init; }
+        {field} +int Column { get; init; }
+        {field} +TileType Type { get; init; }
+        +Tile(int Row, int Column, TileType Type)
+    }
+
+    ' 타일의 색상과 특수 타일을 구분한다.
+    enum TileType {
+        Red
+        Blue
+        Green
+        Yellow
+        Purple
+        Special
+    }
+}
+
+
+' =========================
+' Repository 인터페이스
+' =========================
+
+package "Data.Interfaces" {
+
+    ' 프로필을 조회하고 저장하는 계약이다.
+    interface IProfileRepository {
+        +Task<PlayerProfile> GetProfileAsync()
+        +Task SaveProfileAsync(PlayerProfile profile)
+    }
+
+    ' 재화를 조회하고 저장하며 소비 가능 여부는 판단하지 않는다.
+    interface IWalletRepository {
+        +Task<Wallet> GetWalletAsync()
+        +Task SaveWalletAsync(Wallet wallet)
+    }
+
+    ' 사용자 설정을 조회하고 저장하는 계약이다.
+    interface ISettingsRepository {
+        +Task<GameSettings> GetSettingsAsync()
+        +Task SaveSettingsAsync(GameSettings settings)
+    }
+
+    ' 레벨 목록과 특정 레벨의 기본 데이터를 조회한다.
+    interface ILevelRepository {
+        +Task<List<Level>> GetLevelsAsync()
+        +Task<Level> GetLevelAsync(int levelId)
+    }
+
+    ' 레벨별 플레이어 진행도를 조회하고 저장한다.
+    interface IProgressRepository {
+        +Task<List<LevelProgress>> GetProgressListAsync()
+        +Task<LevelProgress> GetProgressAsync(int levelId)
+        +Task SaveProgressAsync(LevelProgress progress)
+    }
+
+    ' 미션 데이터를 조회하고 저장하며 보상 수령 규칙은 Service에 둔다.
+    interface IMissionRepository {
+        +Task<List<Mission>> GetMissionsAsync()
+        +Task SaveMissionAsync(Mission mission)
+    }
+
+    ' 현재 게임 세션을 조회, 저장, 삭제하는 계약이다.
+    interface IGameSessionRepository {
+        +Task<GameSession> GetSessionAsync()
+        +Task SaveSessionAsync(GameSession session)
+        +Task DeleteSessionAsync()
+    }
+}
+
+
+' =========================
+' 모델 관계
+' =========================
+
+' 숫자는 연결 개수이며, 이 설계에서는 프로필 하나에 지갑 하나가 연결된다.
+PlayerProfile "1" -- "1" Wallet
+
+' *--는 전체와 구성 요소의 관계이며 레벨 하나에 목표가 하나 이상 포함된다.
+Level "1" *-- "1..*" LevelGoal
+' 레벨 기본 정보와 진행 기록은 분리하며, 진행 기록이 아직 없을 수도 있다.
+Level "1" -- "0..1" LevelProgress
+
+Mission "1" --> "1" Reward
+
+GameSession "1" --> "1" Level
+GameSession "1" *-- "1" Board
+
+' 퍼즐판 하나는 타일을 여러 개 포함하며 초기에는 타일이 없을 수도 있다.
+Board "1" *-- "0..*" Tile
+
+LevelGoal --> GoalType
+Mission --> MissionStatus
+GameSession --> GameState
+Tile --> TileType
+
+
+' =========================
+' Repository 인터페이스가 사용하는 모델
+' =========================
+
+' ..>는 메서드의 매개변수나 반환값 등으로 해당 타입을 사용한다는 뜻이다.
+IProfileRepository ..> PlayerProfile
+
+IWalletRepository ..> Wallet
+
+ISettingsRepository ..> GameSettings
+
+ILevelRepository ..> Level
+
+IProgressRepository ..> LevelProgress
+
+IMissionRepository ..> Mission
+
+IGameSessionRepository ..> GameSession
+
+@enduml
