@@ -1,0 +1,144 @@
+﻿@startuml
+skinparam classAttributeIconSize 0
+skinparam packageStyle rectangle
+
+' ==========================================
+'  Domain Models: User & Profile
+' ==========================================
+package "User Domain" {
+    class UserProfile {
+        - id: String
+        - nickname: String
+        - profilePictureUrl: String
+        - soundVolume: float
+        - musicVolume: float
+        + updateProfile(name: String, pictureUrl: String): void
+        + setAudioSettings(sound: float, music: float): void
+    }
+
+    class UserWallet {
+        - userId: String
+        - coins: int
+        - keys: int
+        + addCoins(amount: int): void
+        + consumeCoins(amount: int): bool
+        + addKeys(amount: int): void
+        + consumeKeys(amount: int): bool
+    }
+}
+
+' ==========================================
+'  Domain Models: Match-3 Puzzle & Stage
+' ==========================================
+package "Stage & Puzzle Domain" {
+    enum LevelStatus {
+        LOCKED
+        UNLOCKED
+        COMPLETED
+    }
+
+    class LevelConfig {
+        - levelNumber: int
+        - maxMoves: int
+        - targetScore: int
+        - targetItemType: String
+        - targetItemCount: int
+        - starScoreThresholds: int[]
+    }
+
+    class UserLevelProgress {
+        - userId: String
+        - levelNumber: int
+        - status: LevelStatus
+        - bestScore: int
+        - earnedStars: int
+        + updateProgress(score: int, stars: int): void
+    }
+
+    class InGameBooster {
+        - boosterId: String
+        - name: String
+        - count: int
+        + useBooster(): bool
+    }
+
+    class PuzzleGameBoard {
+        - currentScore: int
+        - remainingMoves: int
+        - collectedTargets: int
+        - currentStars: int
+        + swapTiles(fromX: int, fromY: int, toX: int, toY: int): bool
+        + checkMatches(): void
+        + evaluateGameResult(): bool
+    }
+}
+
+' ==========================================
+'  Domain Models: Island & Zone Task
+' ==========================================
+package "Restoration Domain" {
+    enum TaskStatus {
+        PENDING
+        COMPLETED
+    }
+
+    class Zone {
+        - zoneId: int
+        - zoneName: String
+        - totalTasks: int
+        - isUnlocked: bool
+    }
+
+    class RestorationTask {
+        - taskId: String
+        - zoneId: int
+        - taskName: String
+        - requiredKeys: int
+        - status: TaskStatus
+        + completeTask(): void
+    }
+}
+
+' ==========================================
+'  Repository Interfaces
+' ==========================================
+package "Repositories" {
+    interface IUserRepository {
+        + GetProfile(userId: String): UserProfile
+        + SaveProfile(profile: UserProfile): void
+    }
+
+    interface IWalletRepository {
+        + GetWallet(userId: String): UserWallet
+        + SaveWallet(wallet: UserWallet): void
+    }
+
+    interface ILevelProgressRepository {
+        + GetLevelProgress(userId: String, levelNumber: int): UserLevelProgress
+        + GetAllProgress(userId: String): List<UserLevelProgress>
+        + SaveProgress(progress: UserLevelProgress): void
+    }
+
+    interface IRestorationTaskRepository {
+        + GetTasksByZone(zoneId: int): List<RestorationTask>
+        + UpdateTaskStatus(taskId: String, status: TaskStatus): void
+    }
+}
+
+' ==========================================
+'  Relationships
+' ==========================================
+UserProfile "1" *-- "1" UserWallet
+UserLevelProgress ..> LevelStatus
+RestorationTask ..> TaskStatus
+Zone "1" *-- "many" RestorationTask
+
+IUserRepository ..> UserProfile
+IWalletRepository ..> UserWallet
+ILevelProgressRepository ..> UserLevelProgress
+IRestorationTaskRepository ..> RestorationTask
+
+PuzzleGameBoard ..> LevelConfig : initialized by
+PuzzleGameBoard "1" o-- "many" InGameBooster
+
+@enduml

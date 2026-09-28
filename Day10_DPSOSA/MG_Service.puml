@@ -1,0 +1,155 @@
+﻿@startuml
+skinparam classAttributeIconSize 0
+skinparam packageStyle rectangle
+
+' ==========================================
+'  Common Utility (Functional Result Pattern)
+' ==========================================
+package "Common" {
+    class "Result<T, E>" as Result {
+        + isSuccess: bool
+        + value: T
+        + error: E
+        + Success(value: T): Result<T, E>
+        + Failure(error: E): Result<T, E>
+    }
+
+    enum GameErrorCode {
+        NONE
+        USER_NOT_FOUND
+        LEVEL_NOT_FOUND
+        TASK_ALREADY_COMPLETED
+        INSUFFICIENT_KEYS
+        INSUFFICIENT_COINS
+        LEVEL_GOAL_NOT_REACHED
+        INVALID_OPERATION
+    }
+}
+
+' ==========================================
+'  Domain Entities / Models
+' ==========================================
+package "Domain Entities" {
+    class UserProfile {
+        + id: String
+        + nickname: String
+        + avatarUrl: String
+        + soundVolume: float
+        + musicVolume: float
+    }
+
+    class UserWallet {
+        + userId: String
+        + coins: int
+        + keys: int
+        + hasEnoughKeys(amount: int): bool
+        + hasEnoughCoins(amount: int): bool
+        + addCoins(amount: int): void
+        + deductCoins(amount: int): void
+        + addKeys(amount: int): void
+        + deductKeys(amount: int): void
+    }
+
+    class LevelConfig {
+        + levelNumber: int
+        + maxMoves: int
+        + targetItemCount: int
+        + starThresholds: int[]
+        + rewardCoins: int
+        + rewardKeys: int
+    }
+
+    enum LevelStatus {
+        LOCKED
+        UNLOCKED
+        COMPLETED
+    }
+
+    class UserLevelProgress {
+        + userId: String
+        + levelNumber: int
+        + status: LevelStatus
+        + bestScore: int
+        + stars: int
+    }
+
+    enum TaskStatus {
+        PENDING
+        COMPLETED
+    }
+
+    class RestorationTask {
+        + taskId: String
+        + zoneId: int
+        + taskName: String
+        + requiredKeys: int
+        + status: TaskStatus
+        + markAsCompleted(): void
+    }
+}
+
+' ==========================================
+'  Pure Repositories (Task<T> Return)
+' ==========================================
+package "Repositories (Pure I/O)" {
+    interface IWalletRepository {
+        + GetWalletAsync(userId: String): Task<UserWallet>
+        + SaveWalletAsync(wallet: UserWallet): Task
+    }
+
+    interface ILevelConfigRepository {
+        + GetConfigAsync(levelNumber: int): Task<LevelConfig>
+    }
+
+    interface ILevelProgressRepository {
+        + GetProgressAsync(userId: String, levelNumber: int): Task<UserLevelProgress>
+        + SaveProgressAsync(progress: UserLevelProgress): Task
+    }
+
+    interface IRestorationTaskRepository {
+        + GetTaskAsync(taskId: String): Task<RestorationTask>
+        + GetTasksByZoneAsync(zoneId: int): Task<List<RestorationTask>>
+        + SaveTaskAsync(task: RestorationTask): Task
+    }
+}
+
+' ==========================================
+'  Services (Business Judgement & Result<T, Error>)
+' ==========================================
+package "Services (Business Orchestration)" {
+    class StageClearReward {
+        + earnedCoins: int
+        + earnedKeys: int
+        + earnedStars: int
+        + isNextLevelUnlocked: bool
+    }
+
+    interface IPuzzleStageService {
+        + CompleteStageAsync(userId: String, levelNumber: int, finalScore: int, collectedTargets: int, remainingMoves: int): Task<Result<StageClearReward, GameErrorCode>>
+    }
+
+    interface IRestorationService {
+        + ExecuteTaskAsync(userId: String, taskId: String): Task<Result<RestorationTask, GameErrorCode>>
+    }
+}
+
+' ==========================================
+'  Dependencies
+' ==========================================
+IPuzzleStageService ..> Result
+IRestorationService ..> Result
+Result ..> GameErrorCode
+
+IPuzzleStageService --> ILevelConfigRepository : uses
+IPuzzleStageService --> ILevelProgressRepository : uses
+IPuzzleStageService --> IWalletRepository : uses
+
+IRestorationService --> IRestorationTaskRepository : uses
+IRestorationService --> IWalletRepository : uses
+
+IWalletRepository ..> UserWallet
+ILevelConfigRepository ..> LevelConfig
+ILevelProgressRepository ..> UserLevelProgress
+IRestorationTaskRepository ..> RestorationTask
+
+@enduml
