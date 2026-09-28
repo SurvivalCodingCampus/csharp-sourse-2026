@@ -1,0 +1,402 @@
+﻿@startuml
+skinparam ClassAttributeIconSize 0
+skinparam packageStyle rectangle
+
+' ==================================================
+' Core
+' 여러 계층에서 공통으로 사용하는 안정적인 타입
+' ==================================================
+
+package Core {
+
+  enum ErrorType {
+    NOT_FOUND
+    INVALID_INPUT
+    INVALID_DATA
+    INVALID_STATE
+    ALREADY_COMPLETED
+    INSUFFICIENT_KEYS
+    INSUFFICIENT_COINS
+    IO_ERROR
+    SAVE_FAILED
+  }
+
+  class Result {
+    - isSuccess: Boolean
+    - error: ErrorType
+    + {static} success(): Result
+    + {static} failure(error: ErrorType): Result
+  }
+
+  class "Result<T>" as ResultT {
+    - isSuccess: Boolean
+    - value: T
+    - error: ErrorType
+    + {static} success(value: T): Result<T>
+    + {static} failure(error: ErrorType): Result<T>
+  }
+
+  ResultT -|> Result
+}
+
+note right of Result
+  성공과 실패를 동시에
+  가질 수 없도록 생성자를 제한한다.
+end note
+
+' ==================================================
+' Domain
+' 자기 상태와 불변조건 보호
+' ==================================================
+
+package Domain {
+
+  enum GameStatus {
+    PLAYING
+    WIN
+    LOSE
+    PAUSED
+  }
+
+  enum BoostType {
+    BOMB
+    DYNAMITE
+    CROSS_ROCKET
+    HAMMER
+  }
+
+  enum EntityType {
+    LAMP
+    WELL
+  }
+
+  class GameState {
+    - player: Player
+    - levels: List<Level>
+    - zones: List<Zone>
+    - tasks: List<Task>
+    - entities: List<Entity>
+    - sessions: List<GameSession>
+    + findLevel(levelId: Integer): Result<Level>
+    + findZone(zoneId: Integer): Result<Zone>
+    + findTask(taskId: Integer): Result<Task>
+    + findEntity(entityId: Integer): Result<Entity>
+    + findSession(sessionId: String): Result<GameSession>
+  }
+
+  class Player {
+    - playerId: String
+    - playerName: String
+    - coin: Integer
+    - goldenKey: Integer
+    - profilePicture: String
+    - selectedFlag: String
+    - currentZoneId: Integer
+    - soundEnabled: Boolean
+    - musicEnabled: Boolean
+    + addCoins(amount: Integer): Result
+    + reduceCoins(amount: Integer): Result
+    + addGoldenKeys(amount: Integer): Result
+    + reduceGoldenKeys(amount: Integer): Result
+    + updateProfile(name: String, picture: String, flag: String): Result
+  }
+
+  class Level {
+    - levelId: Integer
+    - levelNumber: Integer
+    - isLocked: Boolean
+    - stars: Integer
+    - targetGoal: Integer
+    - movesLimit: Integer
+    + unlock(): Result
+    + recordStars(stars: Integer): Result
+  }
+
+  class Zone {
+    - zoneId: Integer
+    - zoneName: String
+    - currentProgress: Integer
+    - maxProgress: Integer
+    - isGoldenKeyActive: Boolean
+    + advanceProgress(amount: Integer): Result
+    + activateGoldenKey(): Result
+  }
+
+  class Task {
+    - taskId: Integer
+    - zoneId: Integer
+    - targetEntityId: Integer
+    - taskDescription: String
+    - currentProgress: Integer
+    - totalRequired: Integer
+    - isCompleted: Boolean
+    - requiredKeys: Integer
+    + addProgress(amount: Integer): Result
+    + complete(): Result
+  }
+
+  class Entity {
+    - entityId: Integer
+    - zoneId: Integer
+    - entityType: EntityType
+    - levelOfBuilding: Integer
+    + upgrade(): Result
+  }
+
+  class GameSession {
+    - sessionId: String
+    - playerId: String
+    - levelId: Integer
+    - score: Long
+    - collectedGoals: Integer
+    - remainingMoves: Integer
+    - status: GameStatus
+    - selectedBoosts: List<BoostType>
+    + consumeMove(): Result
+    + addScore(amount: Long): Result
+    + useBoost(boost: BoostType): Result
+    + pause(): Result
+    + resume(): Result
+    + finish(status: GameStatus): Result
+  }
+
+  class Move {
+    - moveDetails: String
+  }
+}
+
+GameState *-- Player
+GameState *-- "0..*" Level
+GameState *-- "0..*" Zone
+GameState *-- "0..*" Task
+GameState *-- "0..*" Entity
+GameState *-- "0..*" GameSession
+
+Task --> Entity : target
+GameSession --> Level : plays
+GameSession ..> Move : receives
+
+' ==================================================
+' Application
+' 유스케이스 및 저장 계약
+' ==================================================
+
+package Application {
+
+  interface GameRepository {
+    + load(playerId: String): Result<GameState>
+    + save(state: GameState): Result
+  }
+
+  class GameService {
+    - repository: GameRepository
+    + loadGame(playerId: String): Result<GameState>
+    + updateProfile(playerId: String, name: String, picture: String, flag: String): Result<GameState>
+    + completeTask(playerId: String, taskId: Integer): Result<GameState>
+    + startGame(playerId: String, levelId: Integer): Result<GameState>
+    + makeMove(playerId: String, sessionId: String, move: Move): Result<GameState>
+    + useBoost(playerId: String, sessionId: String, boost: BoostType): Result<GameState>
+    + finishGame(playerId: String, sessionId: String): Result<GameState>
+  }
+}
+
+GameService --> GameRepository : depends on abstraction
+GameService ..> GameState : coordinates
+GameService ..> Move
+GameService ..> BoostType
+
+note right of GameService
+  처리 순서:
+
+  1. GameState 조회
+  2. Model 탐색
+  3. Model의 Result 확인
+  4. 모든 변경 성공
+  5. GameState 저장
+  6. 저장 성공 상태만 반환
+
+  실패한 상태는 저장하거나
+  외부에 반환하지 않는다.
+end note
+
+' ==================================================
+' Infrastructure - DTO
+' 저장 형식 전용 데이터
+' ==================================================
+
+package Infrastructure.DTO {
+
+  class GameSaveDto {
+    - saveVersion: Integer
+    - player: PlayerDto
+    - levels: List<LevelDto>
+    - zones: List<ZoneDto>
+    - tasks: List<TaskDto>
+    - entities: List<EntityDto>
+    - sessions: List<GameSessionDto>
+  }
+
+  class PlayerDto {
+    - playerId: String
+    - playerName: String
+    - coin: Integer
+    - goldenKey: Integer
+    - profilePicture: String
+    - selectedFlag: String
+    - currentZoneId: Integer
+    - soundEnabled: Boolean
+    - musicEnabled: Boolean
+  }
+
+  class LevelDto {
+    - levelId: Integer
+    - levelNumber: Integer
+    - isLocked: Boolean
+    - stars: Integer
+    - targetGoal: Integer
+    - movesLimit: Integer
+  }
+
+  class ZoneDto {
+    - zoneId: Integer
+    - zoneName: String
+    - currentProgress: Integer
+    - maxProgress: Integer
+    - isGoldenKeyActive: Boolean
+  }
+
+  class TaskDto {
+    - taskId: Integer
+    - zoneId: Integer
+    - targetEntityId: Integer
+    - taskDescription: String
+    - currentProgress: Integer
+    - totalRequired: Integer
+    - isCompleted: Boolean
+    - requiredKeys: Integer
+  }
+
+  class EntityDto {
+    - entityId: Integer
+    - zoneId: Integer
+    - entityType: String
+    - levelOfBuilding: Integer
+  }
+
+  class GameSessionDto {
+    - sessionId: String
+    - playerId: String
+    - levelId: Integer
+    - score: Long
+    - collectedGoals: Integer
+    - remainingMoves: Integer
+    - status: String
+    - selectedBoosts: List<String>
+  }
+}
+
+GameSaveDto *-- PlayerDto
+GameSaveDto *-- "0..*" LevelDto
+GameSaveDto *-- "0..*" ZoneDto
+GameSaveDto *-- "0..*" TaskDto
+GameSaveDto *-- "0..*" EntityDto
+GameSaveDto *-- "0..*" GameSessionDto
+
+' ==================================================
+' Infrastructure - Mapper
+' DTO와 Domain 변환만 담당
+' ==================================================
+
+package Infrastructure.Mapper {
+
+  class GameSaveMapper {
+    + {static} toDomain(dto: GameSaveDto): Result<GameState>
+    + {static} toDto(state: GameState): GameSaveDto
+  }
+}
+
+GameSaveMapper ..> GameSaveDto
+GameSaveMapper ..> GameState
+
+note right of GameSaveMapper
+  잘못된 enum, 음수 재화,
+  잘못된 진행도는 INVALID_DATA로 반환한다.
+end note
+
+' ==================================================
+' Infrastructure - DataSource
+' 실제 파일 I/O만 담당
+' ==================================================
+
+package Infrastructure.DataSource {
+
+  interface GameDataSource {
+    + load(playerId: String): GameSaveDto
+    + save(dto: GameSaveDto)
+  }
+
+  class JsonGameDataSource {
+    - savePath: String
+    + load(playerId: String): GameSaveDto
+    + save(dto: GameSaveDto)
+  }
+}
+
+JsonGameDataSource ..|> GameDataSource
+GameDataSource ..> GameSaveDto
+
+note right of JsonGameDataSource
+  비즈니스 판정을 하지 않는다.
+
+  저장 순서:
+  1. 임시 파일 작성
+  2. 저장 데이터 확인
+  3. 기존 파일 백업
+  4. 실제 파일과 교체
+
+  I/O 실패는 예외로 전달한다.
+end note
+
+' ==================================================
+' Infrastructure - Repository 구현
+' ==================================================
+
+package Infrastructure.Repository {
+
+  class LocalGameRepository {
+    - dataSource: GameDataSource
+    + load(playerId: String): Result<GameState>
+    + save(state: GameState): Result
+  }
+}
+
+LocalGameRepository ..|> GameRepository
+LocalGameRepository --> GameDataSource
+LocalGameRepository ..> GameSaveMapper
+
+note right of LocalGameRepository
+  DataSource와 Mapper만 조합한다.
+
+  I/O 예외를 ErrorType으로 변환하고,
+  load할 때마다 새로운 GameState를 반환한다.
+
+  게임 규칙이나 상태 판정은 하지 않는다.
+end note
+
+' ==================================================
+' Composition Root
+' 구체 구현체를 생성하고 연결하는 유일한 위치
+' ==================================================
+
+package Bootstrap {
+
+  class GameCompositionRoot {
+    + create(savePath: String): GameService
+  }
+}
+
+GameCompositionRoot ..> JsonGameDataSource : creates
+GameCompositionRoot ..> LocalGameRepository : creates
+GameCompositionRoot ..> GameService : creates
+
+@enduml
