@@ -1,0 +1,150 @@
+﻿@startuml GameDomainModel
+
+' ===== Enums =====
+enum TileType {
+  RED
+  BLUE
+  GREEN
+  YELLOW
+  PURPLE
+  SPECIAL
+}
+
+enum SessionStatus {
+  IN_PROGRESS
+  WON
+  LOST
+}
+
+enum RewardType {
+  COINS
+  GEMS
+  GOLDEN_KEY
+}
+
+' ===== Domain Entities =====
+class Player {
+  +playerId: string
+  +nickname: string
+  +countryFlag: string
+  +profileImageUrl: string
+  +coins: int
+  +gems: int
+  +goldenKeys: int
+  --
+  +addCoins(amount: int): void
+  +addGoldenKey(amount: int): void
+  +changeNickname(name: string): void
+}
+
+class PlayerSettings {
+  +playerId: string
+  +soundEnabled: bool
+  +musicEnabled: bool
+  --
+  +toggleSound(): void
+  +toggleMusic(): void
+}
+
+class Level {
+  +levelId: string
+  +levelNumber: int
+  +targetScore: int
+  +moveLimit: int
+  +difficulty: int
+}
+
+class LevelProgress {
+  +playerId: string
+  +levelId: string
+  +stars: int
+  +bestScore: int
+  +isUnlocked: bool
+  +isCompleted: bool
+  --
+  +updateResult(score: int, stars: int): void
+}
+
+class Task {
+  +taskId: string
+  +title: string
+  +description: string
+  +currentProgress: int
+  +targetProgress: int
+  +rewardType: RewardType
+  +rewardAmount: int
+  +isCompleted: bool
+  --
+  +addProgress(amount: int): void
+}
+
+class Tile {
+  +row: int
+  +col: int
+  +type: TileType
+}
+
+class GameSession {
+  +sessionId: string
+  +level: Level
+  +currentScore: int
+  +movesRemaining: int
+  +status: SessionStatus
+  +board: Tile[][]
+  --
+  +swapTiles(a: Tile, b: Tile): void
+  +useMove(): void
+  +checkResult(): SessionStatus
+}
+
+' ===== Relationships =====
+Player "1" -- "1" PlayerSettings
+Player "1" -- "*" LevelProgress
+Level "1" -- "*" LevelProgress
+Player "1" -- "*" Task
+GameSession "1" o-- "1" Level
+GameSession "1" *-- "*" Tile
+
+' ===== Repository Interfaces =====
+interface IPlayerRepository {
+  +getPlayer(playerId: string): Player
+  +savePlayer(player: Player): void
+  +updateCurrency(playerId: string, coins: int, gems: int, goldenKeys: int): void
+}
+
+interface IPlayerSettingsRepository {
+  +getSettings(playerId: string): PlayerSettings
+  +saveSettings(settings: PlayerSettings): void
+}
+
+interface ILevelRepository {
+  +getLevel(levelId: string): Level
+  +getAllLevels(): Level[]
+}
+
+interface ILevelProgressRepository {
+  +getProgress(playerId: string, levelId: string): LevelProgress
+  +getAllProgress(playerId: string): LevelProgress[]
+  +saveProgress(progress: LevelProgress): void
+}
+
+interface ITaskRepository {
+  +getActiveTasks(playerId: string): Task[]
+  +updateTaskProgress(taskId: string, amount: int): void
+  +completeTask(taskId: string): void
+}
+
+interface IGameSessionRepository {
+  +getActiveSession(playerId: string): GameSession
+  +saveSession(session: GameSession): void
+  +endSession(sessionId: string): void
+}
+
+IPlayerRepository ..> Player
+IPlayerSettingsRepository ..> PlayerSettings
+ILevelRepository ..> Level
+ILevelProgressRepository ..> LevelProgress
+ITaskRepository ..> Task
+IGameSessionRepository ..> GameSession
+
+@enduml
