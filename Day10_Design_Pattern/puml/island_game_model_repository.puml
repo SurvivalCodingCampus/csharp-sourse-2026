@@ -1,0 +1,192 @@
+﻿@startuml
+title Island Mobile Game - Model and Repository Design
+
+left to right direction
+skinparam classAttributeIconSize 0
+skinparam packageStyle rectangle
+hide circle
+
+package "Domain Models" {
+  class PlayerProfile {
+    +PlayerId: Guid
+    +Nickname: string
+    +AvatarId: string
+  }
+
+  class PlayerResource {
+    +PlayerId: Guid
+    +ResourceId: string
+    +Amount: int
+  }
+
+  class Zone {
+    +ZoneId: int
+    +Name: string
+    +ObjectiveCount: int
+  }
+
+  class ZoneProgress {
+    +PlayerId: Guid
+    +ZoneId: int
+    +CompletedObjectives: int
+  }
+
+  class Level {
+    +LevelId: int
+    +ZoneId: int
+    +Number: int
+    +MoveLimit: int
+    +TargetItemId: string
+    +TargetCount: int
+  }
+
+  class LevelProgress {
+    +PlayerId: Guid
+    +LevelId: int
+    +BestScore: int
+    +Stars: int
+    +IsUnlocked: bool
+  }
+
+  class GameSession <<transient>> {
+    +PlayerId: Guid
+    +LevelId: int
+    +Score: int
+    +MovesRemaining: int
+    +CollectedTargetCount: int
+    +SelectedBoosterIds: IReadOnlyList<string>
+    +Status: GameStatus
+  }
+
+  class GameResult <<transient>> {
+    +FinalScore: int
+    +CollectedTargetCount: int
+    +CoinsEarned: int
+  }
+
+  class BoardTile {
+    +Row: int
+    +Column: int
+    +Kind: TileKind
+  }
+
+  enum TileKind {
+    Blue
+    Yellow
+    Green
+    Pink
+    Balloon
+  }
+
+  enum GameStatus {
+    SelectingBoosters
+    ShowingTarget
+    Playing
+    Won
+  }
+
+  class TaskDefinition {
+    +TaskId: string
+    +ZoneId: int
+    +Title: string
+    +TargetCount: int
+  }
+
+  class TaskProgress {
+    +PlayerId: Guid
+    +TaskId: string
+    +CurrentCount: int
+    +IsCompleted: bool
+  }
+
+  class BoosterDefinition {
+    +BoosterId: string
+    +Name: string
+  }
+
+  class BoosterStock {
+    +PlayerId: Guid
+    +BoosterId: string
+    +Quantity: int
+  }
+
+  class GameSettings {
+    +PlayerId: Guid
+    +MusicEnabled: bool
+    +SoundEnabled: bool
+  }
+}
+
+package "Repository Interfaces" {
+  interface IPlayerRepository {
+    +GetByIdAsync(playerId: Guid): Task<Result<PlayerProfile, RepositoryError>>
+    +SaveAsync(profile: PlayerProfile): Task<Result<PlayerProfile, RepositoryError>>
+  }
+
+  interface IResourceRepository {
+    +GetForPlayerAsync(playerId: Guid): Task<Result<IReadOnlyList<PlayerResource>, RepositoryError>>
+    +SaveAsync(resource: PlayerResource): Task<Result<PlayerResource, RepositoryError>>
+  }
+
+  interface ILevelRepository {
+    +GetZonesAsync(): Task<Result<IReadOnlyList<Zone>, RepositoryError>>
+    +GetByZoneAsync(zoneId: int): Task<Result<IReadOnlyList<Level>, RepositoryError>>
+    +GetByIdAsync(levelId: int): Task<Result<Level, RepositoryError>>
+  }
+
+  interface ILevelProgressRepository {
+    +GetForPlayerAsync(playerId: Guid): Task<Result<IReadOnlyList<LevelProgress>, RepositoryError>>
+    +SaveAsync(progress: LevelProgress): Task<Result<LevelProgress, RepositoryError>>
+  }
+
+  interface IZoneProgressRepository {
+    +GetForPlayerAsync(playerId: Guid): Task<Result<IReadOnlyList<ZoneProgress>, RepositoryError>>
+    +SaveAsync(progress: ZoneProgress): Task<Result<ZoneProgress, RepositoryError>>
+  }
+
+  interface ITaskRepository {
+    +GetAvailableAsync(): Task<Result<IReadOnlyList<TaskDefinition>, RepositoryError>>
+    +GetProgressAsync(playerId: Guid): Task<Result<IReadOnlyList<TaskProgress>, RepositoryError>>
+    +SaveProgressAsync(progress: TaskProgress): Task<Result<TaskProgress, RepositoryError>>
+  }
+
+  interface IBoosterRepository {
+    +GetCatalogAsync(): Task<Result<IReadOnlyList<BoosterDefinition>, RepositoryError>>
+    +GetStockAsync(playerId: Guid): Task<Result<IReadOnlyList<BoosterStock>, RepositoryError>>
+    +SaveStockAsync(stock: BoosterStock): Task<Result<BoosterStock, RepositoryError>>
+  }
+
+  interface ISettingsRepository {
+    +GetByPlayerIdAsync(playerId: Guid): Task<Result<GameSettings, RepositoryError>>
+    +SaveAsync(settings: GameSettings): Task<Result<GameSettings, RepositoryError>>
+  }
+}
+
+package "Shared Types" {
+  abstract class "Result<TData, TError>" as Result
+
+  enum RepositoryError {
+    NotFound
+    NetworkFailure
+    StorageFailure
+  }
+}
+
+PlayerProfile "1" -- "0..*" PlayerResource : owns
+Zone "1" -- "1..*" Level : contains
+PlayerProfile "1" -- "0..*" ZoneProgress : owns
+Zone "1" -- "0..*" ZoneProgress : tracks
+PlayerProfile "1" -- "0..*" LevelProgress : owns
+Level "1" -- "0..*" LevelProgress : tracks
+PlayerProfile "1" -- "0..*" TaskProgress : owns
+Zone "1" -- "0..*" TaskDefinition : offers
+TaskDefinition "1" -- "0..*" TaskProgress : tracks
+PlayerProfile "1" -- "0..*" BoosterStock : owns
+BoosterDefinition "1" -- "0..*" BoosterStock : stocked as
+PlayerProfile "1" -- "1" GameSettings : configures
+PlayerProfile "1" -- "0..1" GameSession : plays
+Level "1" -- "0..*" GameSession : starts
+GameSession "1" *-- "0..*" BoardTile : board
+GameSession "1" -- "0..1" GameResult : completes as
+
+@enduml

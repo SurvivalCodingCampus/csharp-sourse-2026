@@ -1,0 +1,124 @@
+@startuml
+title Island Mobile Game - Refined Dependencies (Assignment 3)
+
+left to right direction
+skinparam classAttributeIconSize 0
+skinparam packageStyle rectangle
+hide circle
+
+package "Service Contracts" {
+  interface IProfileService {
+    +UpdateProfileAsync(playerId: Guid, nickname: string, avatarId: string): Task<Result<PlayerProfile, GameError>>
+  }
+  interface ISettingsService {
+    +SaveSettingsAsync(settings: GameSettings): Task<Result<GameSettings, GameError>>
+  }
+  interface IWalletService {
+    +SpendAsync(playerId: Guid, resourceId: string, amount: int): Task<Result<PlayerResource, GameError>>
+    +CreditAsync(playerId: Guid, resourceId: string, amount: int): Task<Result<PlayerResource, GameError>>
+  }
+  interface ILevelProgressService {
+    +GetLevelMapAsync(playerId: Guid, zoneId: int): Task<Result<IReadOnlyList<LevelOverview>, GameError>>
+    +GetPlayableLevelAsync(playerId: Guid, levelId: int): Task<Result<Level, GameError>>
+    +RecordWinAsync(playerId: Guid, levelId: int, score: int): Task<Result<LevelProgress, GameError>>
+  }
+  interface IZoneProgressService {
+    +GetZoneProgressAsync(playerId: Guid, zoneId: int): Task<Result<ZoneProgress, GameError>>
+  }
+  interface ITaskService {
+    +GetTasksAsync(playerId: Guid, zoneId: int): Task<Result<IReadOnlyList<TaskOverview>, GameError>>
+    +CompleteTaskAsync(playerId: Guid, taskId: string): Task<Result<TaskProgress, GameError>>
+  }
+  interface IGameplayService {
+    +StartLevelAsync(playerId: Guid, levelId: int, boosterIds: IReadOnlyList<string>): Task<Result<GameSession, GameError>>
+    +CompleteLevelAsync(session: GameSession): Task<Result<GameResult, GameError>>
+  }
+}
+
+package "Service Implementations" {
+  class ProfileService
+  class SettingsService
+  class WalletService
+  class LevelProgressService
+  class ZoneProgressService
+  class TaskService
+  class GameplayService
+}
+
+package "Repository Contracts - data access only" {
+  interface IPlayerRepository {
+    +GetByIdAsync(playerId: Guid): Task<PlayerProfile?>
+    +SaveAsync(profile: PlayerProfile): Task<PlayerProfile>
+  }
+  interface ISettingsRepository {
+    +GetByPlayerIdAsync(playerId: Guid): Task<GameSettings?>
+    +SaveAsync(settings: GameSettings): Task<GameSettings>
+  }
+  interface IResourceRepository {
+    +GetForPlayerAsync(playerId: Guid): Task<IReadOnlyList<PlayerResource>>
+    +SaveAsync(resource: PlayerResource): Task<PlayerResource>
+  }
+  interface ILevelRepository {
+    +GetByIdAsync(levelId: int): Task<Level?>
+    +GetZonesAsync(): Task<IReadOnlyList<Zone>>
+    +GetByZoneAsync(zoneId: int): Task<IReadOnlyList<Level>>
+  }
+  interface ILevelProgressRepository {
+    +GetForPlayerAsync(playerId: Guid): Task<IReadOnlyList<LevelProgress>>
+    +SaveAsync(progress: LevelProgress): Task<LevelProgress>
+  }
+  interface ITaskRepository {
+    +GetAvailableAsync(zoneId: int): Task<IReadOnlyList<TaskDefinition>>
+    +GetProgressAsync(playerId: Guid): Task<IReadOnlyList<TaskProgress>>
+    +SaveProgressAsync(progress: TaskProgress): Task<TaskProgress>
+  }
+  interface IBoosterRepository {
+    +GetCatalogAsync(): Task<IReadOnlyList<BoosterDefinition>>
+    +GetStockAsync(playerId: Guid): Task<IReadOnlyList<BoosterStock>>
+    +SaveStockAsync(stock: BoosterStock): Task<BoosterStock>
+  }
+}
+
+package "Computed Read Model" {
+  class ZoneProgress <<derived>> {
+    +PlayerId: Guid
+    +ZoneId: int
+    +CompletedObjectives: int
+  }
+}
+
+package "Service Outcome" {
+  abstract class "Result<TData, TError>" as Result
+  enum GameError {
+    NotFound
+    InvalidInput
+    LevelLocked
+    BoosterUnavailable
+    InsufficientResource
+    TargetNotMet
+    TaskUnavailable
+    DataUnavailable
+  }
+}
+
+ProfileService ..|> IProfileService
+SettingsService ..|> ISettingsService
+WalletService ..|> IWalletService
+LevelProgressService ..|> ILevelProgressService
+ZoneProgressService ..|> IZoneProgressService
+TaskService ..|> ITaskService
+GameplayService ..|> IGameplayService
+
+ProfileService ..> IPlayerRepository
+SettingsService ..> ISettingsRepository
+WalletService ..> IResourceRepository
+LevelProgressService ..> ILevelRepository
+LevelProgressService ..> ILevelProgressRepository
+ZoneProgressService ..> ILevelRepository
+ZoneProgressService ..> ITaskRepository : derives ZoneProgress
+TaskService ..> ITaskRepository
+GameplayService ..> IBoosterRepository
+GameplayService ..> ILevelProgressService
+GameplayService ..> IWalletService
+
+@enduml
