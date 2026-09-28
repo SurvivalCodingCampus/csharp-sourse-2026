@@ -1,0 +1,70 @@
+
+@startuml 07_GameTaskService
+
+title 7. GameTaskService - 월드 과제(램프/우물 고치기) 처리 (교차 조합 예시)
+
+skinparam classAttributeIconSize 0
+
+enum GameTaskState {
+  Locked
+  InProgress
+  ReadyToClaim
+  Completed
+}
+
+' 원래 이름 "Task" 에서 "GameTask"로 변경함 (C#의 Task<T>와 이름 충돌 방지)
+class GameTask {
+  - TaskId: Guid
+  - ZoneId: Guid
+  - TaskName: string
+  - TaskIconImageUrl: string
+  - EnergyCostToStart: int
+  - TaskState: GameTaskState
+  - ZoneProgressPointsAwarded: int
+  + StartTask(): void
+  + CompleteTask(): void
+}
+
+interface GameTaskRepository {
+  + FindTasksByZoneId(zoneId: Guid): Task<List<GameTask>>
+  + FindTaskById(taskId: Guid): Task<GameTask>
+  + SaveTask(task: GameTask): Task
+}
+
+interface PlayerRepository <<see 01_PlayerService>> {
+  + AdjustEnergyPoints(playerId: Guid, energyChangeAmount: int): Task
+}
+
+interface ZoneProgressRepository <<see 05_ZoneService>> {
+  + SaveProgress(progress: ZoneProgress): Task
+}
+
+interface GameTaskService {
+  + ListTasksInZone(zoneId: Guid): Result<List<GameTask>, ServiceError>
+  + StartTask(playerId: Guid, taskId: Guid): Result<GameTask, ServiceError>
+  + CompleteTask(taskId: Guid): Result<GameTask, ServiceError>
+}
+
+class ServiceError <<see 00_CommonTypes>>
+
+GameTask ..> GameTaskState
+
+GameTaskService ..> GameTaskRepository : Task<T> 결과를 기다림(await)
+GameTaskService ..> PlayerRepository : 에너지 차감 >
+GameTaskService ..> ZoneProgressRepository : 진행도 적립 >
+GameTaskService ..> GameTask
+GameTaskRepository ..> GameTask
+GameTaskService ..> ServiceError : 실패 시 반환
+
+note right of GameTaskService
+  StartTask: 플레이어의 EnergyPoints가 EnergyCostToStart보다
+  적으면 NotEnoughEnergy 실패, 충분하면 에너지를 차감하면서
+  동시에 과제를 시작 상태로 만듦 (한 번에 같이 처리됨).
+  CompleteTask: TaskState가 InProgress가 아니면
+  TaskIsNotInProgress 실패, 맞으면 존 진행도(ZoneProgress)에
+  ZoneProgressPointsAwarded 만큼 점수를 더해줌.
+  Repository 혼자서는 표현할 수 없는 "3개의 저장소를 넘나드는 판정"의
+  가장 명확한 예시.
+end note
+
+@enduml

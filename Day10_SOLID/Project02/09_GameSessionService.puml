@@ -1,0 +1,121 @@
+
+@startuml 09_GameSessionService
+
+title 9. GameSessionService - 한 판(게임 세션)의 전체 진행을 조율
+
+skinparam classAttributeIconSize 0
+
+enum GameSessionState {
+  NotStarted
+  InProgress
+  Won
+  Lost
+}
+
+class GameSession {
+  - GameSessionId: Guid
+  - LevelId: Guid
+  - PlayerId: Guid
+  - CurrentScore: int
+  - ObjectiveProgress: int
+  - ObjectiveTargetAmount: int
+  - RemainingMoves: int
+  - SessionState: GameSessionState
+  - StarsEarned: int
+  - CoinsEarned: int
+  - SessionStartedAt: DateTime
+  - SessionFinishedAt: DateTime
+  + StartGame(): void
+  + MakeMove(): void
+  + IncreaseScore(pointsToAdd: int): void
+  + AddObjectiveProgress(amountCollected: int): void
+  + ActivateBoost(boostKind: BoostKind): bool
+  + EndGame(): void
+  + HasPlayerWon(): bool
+}
+
+class GameBoard {
+  - GameBoardId: Guid
+  - GameSessionId: Guid
+  - RowCount: int
+  - ColumnCount: int
+  + SwapTwoTiles(firstTile: BoardTile, secondTile: BoardTile): bool
+  + ClearMatchedTiles(): int
+  + RefillEmptySpaces(): void
+}
+
+enum GemColor {
+  Red
+  Blue
+  Yellow
+  Green
+  Purple
+}
+
+class BoardTile {
+  - RowPosition: int
+  - ColumnPosition: int
+  - GemColor: GemColor
+  - IsLocked: bool
+  + CanBeMatched(): bool
+}
+
+interface GameSessionRepository {
+  + FindSessionById(gameSessionId: Guid): Task<GameSession>
+  + FindActiveSessionByPlayerId(playerId: Guid): Task<GameSession>
+  + SaveSession(session: GameSession): Task
+}
+
+interface LevelRepository <<see 06_LevelService>> {
+  + FindLevelById(levelId: Guid): Task<Level>
+}
+
+interface LevelService <<see 06_LevelService>> {
+  + RecordLevelClearResult(levelId: Guid, finalScore: int, starsEarned: int): Result<Level, ServiceError>
+}
+
+interface GoldenKeyService <<see 04_GoldenKeyService>> {
+  + RegisterLevelCleared(playerId: Guid): Result<GoldenKeyProgress, ServiceError>
+}
+
+interface PlayerService <<see 01_PlayerService>> {
+  + EarnCoins(playerId: Guid, coinsToAdd: int): Result<Player, ServiceError>
+}
+
+interface PlayerBoostService <<see 08_PlayerBoostService>> {
+  + ReserveBoostsForSession(playerId: Guid, selections: List<BoostSelectionForSession>): Result<List<PlayerBoostInventory>, ServiceError>
+}
+
+interface GameSessionService {
+  + StartSession(playerId: Guid, levelId: Guid, boostSelections: List<BoostSelectionForSession>): Result<GameSession, ServiceError>
+  + MakeMove(gameSessionId: Guid, fromTile: BoardTile, toTile: BoardTile): Result<GameSession, ServiceError>
+  + FinishSession(gameSessionId: Guid): Result<GameSession, ServiceError>
+}
+
+class ServiceError <<see 00_CommonTypes>>
+
+GameSession "1" -- "1" GameBoard
+GameBoard "1" -- "*" BoardTile
+BoardTile "1" -- "1" GemColor
+
+GameSessionService ..> GameSessionRepository : Task<T> 결과를 기다림(await)
+GameSessionService ..> LevelRepository : Task<T> 결과를 기다림(await)
+GameSessionService ..> GameSession
+GameSessionRepository ..> GameSession
+
+' ---- Service끼리 서로 호출하는 관계(업무 오케스트레이션) ----
+GameSessionService ..> LevelService : 승리 시, 클리어 결과 기록 >
+GameSessionService ..> GoldenKeyService : 승리 시, 골든키 진행도 갱신 >
+GameSessionService ..> PlayerService : 승리 시, 코인 지급 >
+GameSessionService ..> PlayerBoostService : 시작 시, 부스트 차감 예약 >
+GameSessionService ..> ServiceError : 실패 시 반환
+
+note right of GameSessionService
+  Repository는 절대로 다른 Repository를 호출해서
+  "이 게임을 이기면 다른 4개 데이터를 함께 바꿔라"를
+  표현할 수 없음. GameSessionService.FinishSession()이
+  바로 그 역할을 함 - 형제 Service 3개를 순서대로 호출하고,
+  각각의 Result<T, ServiceError>를 모아 최종 결과를 만듦.
+end note
+
+@enduml

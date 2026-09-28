@@ -1,0 +1,41 @@
+
+@startuml 03_SettingsService
+
+title 3. SettingsService - 사운드/음악 설정
+
+skinparam classAttributeIconSize 0
+
+class PlayerSettings {
+  - SettingsId: Guid
+  - PlayerId: Guid
+  - IsSoundOn: bool
+  - IsMusicOn: bool
+  - MusicVolumeLevel: int
+  + TurnSoundOnOrOff(): void
+  + TurnMusicOnOrOff(): void
+  + ChangeMusicVolume(newVolumeLevel: int): void
+}
+
+interface SettingsRepository {
+  + FindSettingsByPlayerId(playerId: Guid): Task<PlayerSettings>
+  + SaveSettings(settings: PlayerSettings): Task
+}
+
+interface SettingsService {
+  + GetSettings(playerId: Guid): Result<PlayerSettings, ServiceError>
+  + UpdateSettings(playerId: Guid, isSoundOn: bool, isMusicOn: bool, musicVolumeLevel: int): Result<PlayerSettings, ServiceError>
+}
+
+class ServiceError <<see 00_CommonTypes>>
+
+SettingsService ..> SettingsRepository : Task<T> 결과를 기다림(await)
+SettingsService ..> PlayerSettings
+SettingsRepository ..> PlayerSettings
+SettingsService ..> ServiceError : 실패 시 반환
+
+note right of SettingsService
+  판정 규칙: MusicVolumeLevel은 0~100 범위를 벗어나면
+  InputWasInvalid 실패.
+end note
+
+@enduml

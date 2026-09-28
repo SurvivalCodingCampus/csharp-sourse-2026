@@ -1,0 +1,64 @@
+
+@startuml 06_LevelService
+
+title 6. LevelService - 레벨 잠금 해제 및 클리어 결과 기록
+
+skinparam classAttributeIconSize 0
+
+enum LevelUnlockState {
+  Locked
+  Unlocked
+  Cleared
+}
+
+enum LevelGoalType {
+  CollectGems
+  ReachTargetScore
+  ClearObstacles
+}
+
+class Level {
+  - LevelId: Guid
+  - ZoneId: Guid
+  - LevelNumber: int
+  - UnlockState: LevelUnlockState
+  - BestStarsEarned: int
+  - HighestScore: int
+  - MaxMovesAllowed: int
+  - GoalType: LevelGoalType
+  - GoalIconImageCode: string
+  - GoalTargetAmount: int
+  + UnlockThisLevel(): void
+  + RecordClearResult(finalScore: int, starsEarned: int): void
+  + IsCurrentlyLocked(): bool
+}
+
+interface LevelRepository {
+  + FindLevelsByZoneId(zoneId: Guid): Task<List<Level>>
+  + FindLevelById(levelId: Guid): Task<Level>
+  + SaveLevel(level: Level): Task
+}
+
+interface LevelService {
+  + ListLevelsInZone(zoneId: Guid): Result<List<Level>, ServiceError>
+  + UnlockNextLevel(zoneId: Guid, justClearedLevelId: Guid): Result<Level, ServiceError>
+  + RecordLevelClearResult(levelId: Guid, finalScore: int, starsEarned: int): Result<Level, ServiceError>
+}
+
+class ServiceError <<see 00_CommonTypes>>
+
+Level ..> LevelUnlockState
+Level ..> LevelGoalType
+
+LevelService ..> LevelRepository : Task<T> 결과를 기다림(await)
+LevelService ..> Level
+LevelRepository ..> Level
+LevelService ..> ServiceError : 실패 시 반환
+
+note right of LevelService
+  판정 규칙: UnlockNextLevel은 같은 존 안의 바로 이전 레벨이
+  Cleared 상태가 아니면 LevelIsLocked 실패.
+  게임을 이겼을 때 GameSessionService가 이 서비스를 호출함.
+end note
+
+@enduml

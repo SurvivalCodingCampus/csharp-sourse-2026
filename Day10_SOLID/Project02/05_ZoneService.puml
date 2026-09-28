@@ -1,0 +1,52 @@
+
+@startuml 05_ZoneService
+
+title 5. ZoneService - 월드(Zone) 목록과 진행도
+
+skinparam classAttributeIconSize 0
+
+class Zone {
+  - ZoneId: Guid
+  - ZoneName: string
+  - DisplayOrder: int
+  - TotalLevelCount: int
+  - BackgroundImageUrl: string
+}
+
+class ZoneProgress {
+  - ZoneId: Guid
+  - CompletedTaskCount: int
+  - TotalTaskCount: int
+  + AddCompletedTasks(amountCompleted: int): void
+  + GetCompletionPercentage(): float
+  + IsFullyComplete(): bool
+}
+
+interface ZoneRepository {
+  + FindAllZones(): Task<List<Zone>>
+  + FindZoneById(zoneId: Guid): Task<Zone>
+}
+
+interface ZoneProgressRepository {
+  + FindProgressByZoneId(zoneId: Guid): Task<ZoneProgress>
+  + SaveProgress(progress: ZoneProgress): Task
+}
+
+interface ZoneService {
+  + ListAllZones(): Result<List<Zone>, ServiceError>
+  + GetZoneWithProgress(zoneId: Guid): Result<ZoneProgress, ServiceError>
+}
+
+class ServiceError <<see 00_CommonTypes>>
+
+Zone "1" -- "1" ZoneProgress
+
+ZoneService ..> ZoneRepository : Task<T> 결과를 기다림(await)
+ZoneService ..> ZoneProgressRepository : Task<T> 결과를 기다림(await)
+ZoneService ..> Zone
+ZoneService ..> ZoneProgress
+ZoneRepository ..> Zone
+ZoneProgressRepository ..> ZoneProgress
+ZoneService ..> ServiceError : 실패 시 반환
+
+@enduml

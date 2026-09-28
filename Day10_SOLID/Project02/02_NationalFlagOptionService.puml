@@ -1,0 +1,35 @@
+
+@startuml 02_NationalFlagOptionService
+
+title 2. NationalFlagOptionService - 선택 가능한 아바타(국기 아이콘) 목록
+
+skinparam classAttributeIconSize 0
+
+class NationalFlagOption {
+  - NationalFlagCode: string
+  - NationalFlagImageUrl: string
+  - DisplayOrder: int
+}
+
+interface NationalFlagOptionRepository {
+  + FindAllNationalFlagOptions(): Task<List<NationalFlagOption>>
+  + FindNationalFlagOptionByCode(NationalFlagCode: string): Task<NationalFlagOption>
+}
+
+interface NationalFlagOptionService {
+  + ListAvailableNationalFlags(): Result<List<NationalFlagOption>, ServiceError>
+}
+
+class ServiceError <<see 00_CommonTypes>>
+
+NationalFlagOptionService ..> NationalFlagOptionRepository : Task<T> 결과를 기다림(await)
+NationalFlagOptionService ..> NationalFlagOption
+NationalFlagOptionRepository ..> NationalFlagOption
+NationalFlagOptionService ..> ServiceError : 실패 시 반환
+
+note right of NationalFlagOptionService
+  단순 조회 위주. "선택한 코드가 실제로 존재하는 아바타인지"
+  검증은 PlayerService.ChangeNationalFlag 쪽에서 처리함.
+end note
+
+@enduml
